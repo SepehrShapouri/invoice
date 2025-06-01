@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
     let status = 'pending'
     if (accountStatus.charges_enabled && accountStatus.payouts_enabled) {
       status = 'active'
-    } else if (accountStatus.requirements?.currently_due?.length > 0) {
+    } else if (accountStatus.requirements?.currently_due?.length && accountStatus.requirements.currently_due.length > 0) {
       status = 'pending'
     }
 
