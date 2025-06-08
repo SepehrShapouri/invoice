@@ -139,7 +139,7 @@ export default function InvoiceViewPage() {
 
   if (isLoading) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-8">
+      <div className="max-w-4xl mx-auto w-full">
         <div className="animate-pulse">
           <div className="h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
           <div className="h-4 bg-gray-200 rounded w-1/2 mb-8"></div>
@@ -151,7 +151,7 @@ export default function InvoiceViewPage() {
 
   if (error || !invoice) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-8">
+      <div className="max-w-4xl mx-auto w-full">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">
             {error || "Invoice not found"}

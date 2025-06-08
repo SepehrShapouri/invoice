@@ -122,7 +122,7 @@ export default function InvoicesPage() {
 
   if (isLoading) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto w-full">
         <div className="animate-pulse">
           <div className="h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
@@ -137,7 +137,7 @@ export default function InvoicesPage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="max-w-7xl mx-auto w-full">
       {/* Header */}
       <div className="flex justify-between items-center mb-8">
         <div>
