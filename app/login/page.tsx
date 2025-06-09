@@ -22,7 +22,7 @@ export default function LoginPage() {
       password: "",
     },
   })
-  
+
   const router = useRouter()
   const { data: session, isPending } = useSession()
 
@@ -106,6 +106,9 @@ export default function LoginPage() {
                     className="pl-10 h-10 border-gray-200 focus:border-black focus:ring-black rounded-xl"
                   />
                 </div>
+                {form.formState.errors.email && (
+                  <p className="text-red-500 text-sm">{form.formState.errors.email.message}</p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -121,10 +124,13 @@ export default function LoginPage() {
                     className="pl-10 h-10 border-gray-200 focus:border-black focus:ring-black rounded-xl"
                   />
                 </div>
+                {form.formState.errors.password && (
+                  <p className="text-red-500 text-sm">{form.formState.errors.password.message}</p>
+                )}
               </div>
 
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 disabled={form.formState.isSubmitting}
                 className="w-full bg-black hover:bg-gray-800 text-white font-medium h-10 rounded-xl transition-all duration-300 group"
               >
@@ -139,8 +145,8 @@ export default function LoginPage() {
             <div className="text-center">
               <p className="text-gray-600">
                 Don't have an account?{" "}
-                <Link 
-                  href="/register" 
+                <Link
+                  href="/register"
                   className="text-black font-medium hover:text-gray-700 transition-colors underline underline-offset-2"
                 >
                   Create one now
@@ -150,8 +156,8 @@ export default function LoginPage() {
 
             {/* Back to Home */}
             <div className="text-center">
-              <Link 
-                href="/" 
+              <Link
+                href="/"
                 className="text-gray-500 hover:text-black transition-colors text-sm"
               >
                 ← Back to Invoicely
@@ -166,7 +172,7 @@ export default function LoginPage() {
         {/* Glossy background effect */}
         <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-800"></div>
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
-        
+
         <div className="relative flex items-center justify-center min-h-screen w-full p-12">
           <div className="max-w-md w-full space-y-8">
             {/* Main Feature */}
