@@ -130,7 +130,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader>
         <div className="flex items-center">
           <Link href="/dashboard" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">I</span>
             </div>
             <span className="text-xl font-bold text-sidebar-foreground">Invoicely</span>
@@ -195,7 +195,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      
+
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -227,9 +227,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       </div>
                     </div>
                     <DropdownMenuTrigger asChild>
-                      <button className="ml-auto text-sidebar-foreground/50 hover:text-sidebar-foreground">
-                        <IconDotsVertical className="w-4 h-4" />
-                      </button>
+                      <IconDotsVertical className="w-4 h-4" />
                     </DropdownMenuTrigger>
                   </div>
                 </SidebarMenuButton>
