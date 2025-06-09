@@ -9,7 +9,9 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { calculateInvoiceTotals, generateInvoiceSlug } from "@/lib/utils"
-import { Plus, Trash2 } from "lucide-react"
+import { CalendarIcon, ChevronDownIcon, Plus, Trash2 } from "lucide-react"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Calendar } from "@/components/ui/calendar"
 
 interface InvoiceItem {
   id: string
@@ -22,15 +24,16 @@ interface InvoiceItem {
 export default function NewInvoicePage() {
   const { data: session } = useSession()
   const router = useRouter()
-  
+
   // Form state
   const [clientName, setClientName] = useState("")
   const [clientEmail, setClientEmail] = useState("")
-  const [dueDate, setDueDate] = useState("")
+  const [dueDate, setDueDate] = useState<Date | undefined>(undefined)
   const [taxRate, setTaxRate] = useState(0)
   const [notes, setNotes] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
+  const [openDate, setOpenDate] = useState(false)
 
   // Invoice items state
   const [items, setItems] = useState<InvoiceItem[]>([
@@ -106,7 +109,7 @@ export default function NewInvoicePage() {
         tax,
         total,
         currency: "usd",
-        dueDate: dueDate ? new Date(dueDate) : null,
+        dueDate: dueDate ?? null,
         notes: notes.trim(),
       }
 
@@ -123,7 +126,7 @@ export default function NewInvoicePage() {
       }
 
       const { invoice } = await response.json()
-      
+
       // Redirect to invoice view
       router.push(`/dashboard/invoices/${invoice.slug}`)
     } catch (err) {
@@ -151,7 +154,7 @@ export default function NewInvoicePage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
+              <div className="flex flex-col gap-3">
                 <Label htmlFor="clientName">Client Name *</Label>
                 <Input
                   id="clientName"
@@ -162,7 +165,7 @@ export default function NewInvoicePage() {
                   required
                 />
               </div>
-              <div>
+              <div className="flex flex-col gap-3">
                 <Label htmlFor="clientEmail">Client Email *</Label>
                 <Input
                   id="clientEmail"
@@ -175,16 +178,36 @@ export default function NewInvoicePage() {
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="dueDate">Due Date</Label>
-                <Input
-                  id="dueDate"
-                  type="date"
-                  value={dueDate}
-                  onChange={(e) => setDueDate(e.target.value)}
-                />
+              <div className="flex flex-col gap-3">
+                <Label htmlFor="date" className="px-1">
+                  Due Date
+                </Label>
+                <Popover open={openDate} onOpenChange={setOpenDate}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      id="date"
+                      className="w-full justify-between font-normal"
+                    >
+                      {dueDate ? dueDate.toLocaleDateString() : "Select date"}
+                      <CalendarIcon className="w-4 h-4" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="center" side="bottom">
+                    <Calendar
+                      required
+                      mode="single"
+                      selected={dueDate}
+                      captionLayout="dropdown"
+                      onSelect={(date) => {
+                        setDueDate(date)
+                        setOpenDate(false)
+                      }}
+                    />
+                  </PopoverContent>
+                </Popover>
               </div>
-              <div>
+              <div className="flex flex-col gap-3">
                 <Label htmlFor="taxRate">Tax Rate (%)</Label>
                 <Input
                   id="taxRate"
@@ -219,7 +242,7 @@ export default function NewInvoicePage() {
             <div className="space-y-4">
               {items.map((item, index) => (
                 <div key={item.id} className="grid grid-cols-12 gap-4 items-end">
-                  <div className="col-span-12 md:col-span-5">
+                  <div className="col-span-12 space-y-2 md:col-span-5">
                     <Label htmlFor={`description-${item.id}`}>Description</Label>
                     <Textarea
                       id={`description-${item.id}`}
@@ -229,7 +252,7 @@ export default function NewInvoicePage() {
                       rows={2}
                     />
                   </div>
-                  <div className="col-span-4 md:col-span-2">
+                  <div className="col-span-4 md:col-span-2 space-y-2">
                     <Label htmlFor={`quantity-${item.id}`}>Qty</Label>
                     <Input
                       id={`quantity-${item.id}`}
@@ -239,7 +262,7 @@ export default function NewInvoicePage() {
                       onChange={(e) => updateItem(item.id, 'quantity', parseInt(e.target.value) || 1)}
                     />
                   </div>
-                  <div className="col-span-4 md:col-span-2">
+                  <div className="col-span-4 md:col-span-2 space-y-2">
                     <Label htmlFor={`rate-${item.id}`}>Rate</Label>
                     <Input
                       id={`rate-${item.id}`}
@@ -251,7 +274,7 @@ export default function NewInvoicePage() {
                       onChange={(e) => updateItem(item.id, 'rate', parseFloat(e.target.value) || 0)}
                     />
                   </div>
-                  <div className="col-span-3 md:col-span-2">
+                  <div className="col-span-3 md:col-span-2 space-y-2">
                     <Label>Amount</Label>
                     <div className="px-3 py-2 bg-gray-50 rounded-md text-sm">
                       ${item.amount.toFixed(2)}

@@ -252,8 +252,7 @@ export default function DashboardPage() {
               Common tasks to manage your invoicing
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
+          <CardContent className="flex gap-2 flex-col">
               <Link href="/dashboard/new">
                 <div className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
                   <Plus className="h-8 w-8 text-blue-600" />
@@ -281,7 +280,6 @@ export default function DashboardPage() {
                   <p className="text-sm text-gray-500">Unlimited invoices for just $5/month</p>
                 </div>
               </div>
-            </div>
           </CardContent>
         </Card>
       </div>
