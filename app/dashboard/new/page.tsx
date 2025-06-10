@@ -146,13 +146,12 @@ export default function NewInvoicePage() {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-8">
-        {/* Client Information */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Client Information</CardTitle>
-            <CardDescription>Enter your client's details</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
+        <div className="bg-gray-50 rounded-lg p-6">
+          <div className="mb-6">
+            <h2 className="text-lg font-semibold">Client Information</h2>
+            <p className="text-sm text-gray-600">Enter your client's details</p>
+          </div>
+          <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="flex flex-col gap-3">
                 <Label htmlFor="clientName">Client Name *</Label>
@@ -221,66 +220,78 @@ export default function NewInvoicePage() {
                 />
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Invoice Items */}
-        <Card>
-          <CardHeader>
-            <div className="flex justify-between items-center">
-              <div>
-                <CardTitle>Invoice Items</CardTitle>
-                <CardDescription>Add services or products to your invoice</CardDescription>
-              </div>
-              <Button type="button" onClick={addItem} variant="outline" size="sm">
-                <Plus className="h-4 w-4 mr-2" />
-                Add Item
-              </Button>
+        <div>
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-lg font-semibold">Invoice Items</h2>
+            <Button type="button" onClick={addItem} variant="outline" size="sm">
+              <Plus className="h-4 w-4 mr-2" />
+              Add Item
+            </Button>
+          </div>
+          <div className="space-y-4">
+            <div className="border-b border-gray-200 pb-4 hidden md:grid md:grid-cols-12 gap-4 items-center">
+              <strong className="col-span-5">Description</strong>
+              <strong className="col-span-2">Qty</strong>
+              <strong className="col-span-2">Rate</strong>
+              <strong className="col-span-2">Amount</strong>
+              <div className="col-span-1"></div>
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
+            <div className="space-y-6 md:space-y-4">
               {items.map((item, index) => (
-                <div key={item.id} className="grid grid-cols-12 gap-4 items-end">
-                  <div className="col-span-12 space-y-2 md:col-span-5">
-                    <Label htmlFor={`description-${item.id}`}>Description</Label>
-                    <Textarea
-                      id={`description-${item.id}`}
-                      placeholder="Web development services..."
-                      value={item.description}
-                      onChange={(e) => updateItem(item.id, 'description', e.target.value)}
-                      rows={2}
-                    />
-                  </div>
-                  <div className="col-span-4 md:col-span-2 space-y-2">
-                    <Label htmlFor={`quantity-${item.id}`}>Qty</Label>
-                    <Input
-                      id={`quantity-${item.id}`}
-                      type="number"
-                      min="1"
-                      value={item.quantity}
-                      onChange={(e) => updateItem(item.id, 'quantity', parseInt(e.target.value) || 1)}
-                    />
-                  </div>
-                  <div className="col-span-4 md:col-span-2 space-y-2">
-                    <Label htmlFor={`rate-${item.id}`}>Rate</Label>
-                    <Input
-                      id={`rate-${item.id}`}
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      placeholder="0.00"
-                      value={item.rate}
-                      onChange={(e) => updateItem(item.id, 'rate', parseFloat(e.target.value) || 0)}
-                    />
-                  </div>
-                  <div className="col-span-3 md:col-span-2 space-y-2">
-                    <Label>Amount</Label>
-                    <div className="px-3 py-2 bg-gray-50 rounded-md text-sm">
-                      ${item.amount.toFixed(2)}
+                <div key={item.id} className="grid grid-cols-1 md:grid-cols-12 gap-4 items-start md:items-start border-b pb-4 md:border-0 md:pb-0">
+                  <div className="col-span-1 md:col-span-5">
+                    <div className="flex flex-col gap-2">
+                      <Label className="md:hidden">Description</Label>
+                      <Textarea
+                        id={`description-${item.id}`}
+                        placeholder="Web development services..."
+                        value={item.description}
+                        onChange={(e) => updateItem(item.id, 'description', e.target.value)}
+                        rows={2}
+                      />
                     </div>
                   </div>
-                  <div className="col-span-1">
+                  <div className="grid grid-cols-3 md:grid-cols-6 gap-4 col-span-1 md:col-span-6">
+                    <div className="col-span-1 md:col-span-2">
+                      <div className="flex flex-col gap-2">
+                        <Label className="md:hidden">Qty</Label>
+                        <Input
+                          id={`quantity-${item.id}`}
+                          type="number"
+                          min="1"
+                          value={item.quantity}
+                          onChange={(e) => updateItem(item.id, 'quantity', parseInt(e.target.value) || 1)}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-span-1 md:col-span-2">
+                      <div className="flex flex-col gap-2">
+                        <Label className="md:hidden">Rate</Label>
+                        <Input
+                          id={`rate-${item.id}`}
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          placeholder="0.00"
+                          value={item.rate}
+                          onChange={(e) => updateItem(item.id, 'rate', parseFloat(e.target.value) || 0)}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-span-1 md:col-span-2">
+                      <div className="flex flex-col gap-2">
+                        <Label className="md:hidden">Amount</Label>
+                        <div className="px-3 py-2 bg-gray-50 rounded-md text-sm">
+                          ${item.amount.toFixed(2)}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-span-1 md:col-span-1 flex justify-end md:justify-start">
                     {items.length > 1 && (
                       <Button
                         type="button"
@@ -318,24 +329,20 @@ export default function NewInvoicePage() {
                 </div>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Notes */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Additional Notes</CardTitle>
-            <CardDescription>Optional notes for your client</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Textarea
-              placeholder="Payment terms, project details, etc..."
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              rows={3}
-            />
-          </CardContent>
-        </Card>
+        <div className="space-y-2 border-t pt-6">
+          <h2 className="text-lg font-semibold">Additional Notes</h2>
+          <p className="text-sm text-gray-600">Optional notes for your client</p>
+          <Textarea
+            placeholder="Payment terms, project details, etc..."
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            rows={3}
+          />
+        </div>
 
         {/* Error Display */}
         {error && (
