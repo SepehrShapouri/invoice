@@ -231,7 +231,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       </p>
                       <div className="flex items-center gap-1">
                         <p className="text-xs text-sidebar-foreground/60">
-                          {isPro ? 'Pro Plan' : 'Free Plan'}
+                          {isLoadingUserPlan ? <Loader2 className="h-3 w-3 animate-spin" /> : isPro ? 'Pro Plan' : 'Free Plan'}
                         </p>
                         {isPro && (
                           <Crown className="h-3 w-3 text-purple-600" />
