@@ -3,9 +3,15 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
+import { useSession, signOut } from "@/lib/auth-client"
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "../ui/dropdown-menu"
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
+import { LogOut, LayoutDashboard } from "lucide-react"
+import { Skeleton } from "../ui/skeleton"
 
 export function Header() {
   const pathname = usePathname()
+  const { data: session, isPending: isPendingSession } = useSession()
 
   const navItems = [
     { href: "/#features", label: "Features" },
@@ -31,32 +37,60 @@ export function Header() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`transition-colors hover:text-black ${
-                  pathname === item.href
-                    ? "text-black font-medium"
-                    : "text-gray-600"
-                }`}
+                className={`transition-colors hover:text-black ${pathname === item.href
+                  ? "text-black font-medium"
+                  : "text-gray-600"
+                  }`}
               >
                 {item.label}
               </Link>
             ))}
           </div>
 
-          {/* CTA Buttons */}
-          <div className="flex items-center space-x-4">
-            <Link href="/login">
-              <Button variant="ghost" className="text-gray-600 hover:text-black">
-                Sign In
-              </Button>
-            </Link>
-            <Link href="/register">
-              <Button className="bg-black hover:bg-gray-800 text-white">
-                Start Free
-              </Button>
-            </Link>
-          </div>
+          {!session && !isPendingSession ? (
+            <div className="flex items-center space-x-4">
+              <Link href="/login">
+                <Button variant="ghost" className="text-gray-600 hover:text-black">
+                  Sign In
+                </Button>
+              </Link>
+              <Link href="/register">
+                <Button className="bg-black hover:bg-gray-800 text-white">
+                  Start Free
+                </Button>
+              </Link>
+            </div>
+          ) : session ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Avatar className="cursor-pointer">
+                  <AvatarImage src={session.user.image || ""} />
+                  <AvatarFallback>
+                    {session.user.name?.charAt(0)}
+                  </AvatarFallback>
+                </Avatar>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-40">
+                <DropdownMenuItem asChild>
+                  <Link href="/dashboard" className="flex items-center gap-2">
+                    <LayoutDashboard className="h-4 w-4" />
+                    <span>Dashboard</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => signOut()} className="flex items-center gap-2 cursor-pointer">
+                  <LogOut className="h-4 w-4" />
+                  <span>Sign Out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <div className="flex items-center space-x-4">
+              <Skeleton className="h-8 w-8 rounded-full" />
+            </div>
+          )}
+
         </div>
       </div>
-    </nav>
+    </nav >
   )
 } 
