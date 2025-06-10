@@ -26,7 +26,8 @@ import {
   CreditCard,
   MoreVertical,
   TrendingUp,
-  Crown
+  Crown,
+  Loader2
 } from "lucide-react"
 import {
   IconDotsVertical,
@@ -68,6 +69,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname()
   const [invoiceCount, setInvoiceCount] = useState(0)
   const [userPlan, setUserPlan] = useState<string>('free')
+  const [isLoadingUserPlan, setIsLoadingUserPlan] = useState(true)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -84,6 +86,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         if (subscriptionResponse.ok) {
           const subscriptionData = await subscriptionResponse.json()
           setUserPlan(subscriptionData.subscription?.plan || 'free')
+          setIsLoadingUserPlan(false)
         }
       } catch (err) {
         console.error("Failed to fetch data:", err)
@@ -112,7 +115,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     return pathname.startsWith(url)
   }
 
-  const isPro = userPlan !== 'free'
+  const isPro = userPlan !== 'free' && !isLoadingUserPlan
 
   // Build dynamic settings items based on subscription
   const dynamicSettingsItems = [
@@ -171,26 +174,35 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarGroupLabel>Account</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {dynamicSettingsItems.map((item) => {
-                const Icon = item.icon
-                const active = isActive(item.url, item.exact)
+              {isLoadingUserPlan ? (
+                <SidebarMenuItem>
+                  <SidebarMenuButton>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span>Loading...</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ) : (
+                dynamicSettingsItems.map((item) => {
+                  const Icon = item.icon
+                  const active = isActive(item.url, item.exact)
 
-                return (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild isActive={active}>
-                      <Link href={item.url}>
-                        <Icon className="h-4 w-4" />
-                        <span>{item.title}</span>
-                        {item.title === "Upgrade to Pro" && (
-                          <span className="ml-auto text-xs bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full">
-                            $5/mo
-                          </span>
-                        )}
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                )
-              })}
+                  return (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton asChild isActive={active}>
+                        <Link href={item.url}>
+                          <Icon className="h-4 w-4" />
+                          <span>{item.title}</span>
+                          {item.title === "Upgrade to Pro" && (
+                            <span className="ml-auto text-xs bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full">
+                              $5/mo
+                            </span>
+                          )}
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  )
+                })
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
