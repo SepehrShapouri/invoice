@@ -6,53 +6,26 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { formatCurrency } from "@/lib/utils"
-import { 
-  Plus, 
-  FileText, 
-  DollarSign, 
-  Calendar, 
+import { Skeleton } from "@/components/ui/skeleton"
+import {
+  Plus,
+  FileText,
+  DollarSign,
+  Calendar,
   TrendingUp,
   Eye,
   Send,
   CheckCircle
 } from "lucide-react"
 import Link from "next/link"
-
-interface Invoice {
-  id: string
-  slug: string
-  clientName: string
-  clientEmail: string
-  total: number
-  currency: string
-  status: 'draft' | 'unpaid' | 'paid' | 'overdue'
-  dueDate?: string
-  createdAt: string
-  updatedAt: string
-}
+import useInvoices from "@/hooks/use-invoices"
 
 export default function DashboardPage() {
   const { data: session } = useSession()
-  const [invoices, setInvoices] = useState<Invoice[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  const { data: invoices, isLoading: isLoadingInvoices } = useInvoices()
 
-  useEffect(() => {
-    const fetchInvoices = async () => {
-      try {
-        const response = await fetch("/api/invoices")
-        if (response.ok) {
-          const data = await response.json()
-          setInvoices(data.invoices)
-        }
-      } catch (err) {
-        console.error("Failed to fetch invoices:", err)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    fetchInvoices()
-  }, [])
+  console.log("Raw invoices from hook:", invoices)
+  console.log("Loading state:", isLoadingInvoices)
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -68,32 +41,102 @@ export default function DashboardPage() {
   }
 
   const stats = {
-    total: invoices.length,
-    paid: invoices.filter(inv => inv.status === 'paid').length,
-    unpaid: invoices.filter(inv => inv.status === 'unpaid').length,
-    overdue: invoices.filter(inv => inv.status === 'overdue').length,
-    totalRevenue: invoices.filter(inv => inv.status === 'paid').reduce((sum, inv) => sum + inv.total, 0),
-    pendingAmount: invoices.filter(inv => inv.status === 'unpaid' || inv.status === 'overdue').reduce((sum, inv) => sum + inv.total, 0)
+    total: invoices?.length || 0,
+    paid: invoices?.filter(inv => inv.status === 'paid').length || 0,
+    unpaid: invoices?.filter(inv => inv.status === 'unpaid').length || 0,
+    overdue: invoices?.filter(inv => inv.status === 'overdue').length || 0,
+    totalInvoices: invoices?.length || 0,
+    paidInvoices: invoices?.filter(inv => inv.status === 'paid').length || 0,
+    unpaidInvoices: invoices?.filter(inv => inv.status === 'unpaid').length || 0,
+    overdueInvoices: invoices?.filter(inv => inv.status === 'overdue').length || 0,
+    totalRevenue: invoices?.filter(inv => inv.status === 'paid').reduce((sum, inv) => sum + inv.total, 0) || 0,
+    pendingAmount: invoices?.filter(inv => inv.status === 'unpaid' || inv.status === 'overdue').reduce((sum, inv) => sum + inv.total, 0) || 0,
   }
 
   const recentInvoices = invoices
-    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-    .slice(0, 5)
+    ?.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .slice(0, 5) || []
 
-  if (isLoading) {
+  if (isLoadingInvoices) {
     return (
       <div className="max-w-7xl w-full mx-auto">
-        <div className="animate-pulse">
-          <div className="h-8 bg-gray-200 rounded w-1/4 mb-8"></div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-32 bg-gray-200 rounded"></div>
-            ))}
+        {/* Header Skeleton */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 mb-8">
+          <div>
+            <Skeleton className="h-8 w-48 sm:w-64 mb-2" />
+            <Skeleton className="h-4 w-64 sm:w-96" />
           </div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div className="h-96 bg-gray-200 rounded"></div>
-            <div className="h-96 bg-gray-200 rounded"></div>
-          </div>
+          <Skeleton className="h-10 w-full sm:w-32" />
+        </div>
+
+        {/* Stats Cards Skeleton */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          {[...Array(4)].map((_, i) => (
+            <Card key={i}>
+              <CardContent className="p-6">
+                <div className="flex items-center">
+                  <Skeleton className="h-8 w-8 rounded" />
+                  <div className="ml-4 space-y-2">
+                    <Skeleton className="h-4 w-24" />
+                    <Skeleton className="h-7 w-16" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {/* Content Skeleton */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <Skeleton className="h-6 w-32" />
+                <Skeleton className="h-9 w-20" />
+              </div>
+              <Skeleton className="h-4 w-48" />
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {[...Array(5)].map((_, i) => (
+                  <div key={i} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                    <div className="flex items-center space-x-3">
+                      <div className="space-y-1">
+                        <Skeleton className="h-4 w-24" />
+                        <Skeleton className="h-3 w-32" />
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-4">
+                      <div className="text-right space-y-1">
+                        <Skeleton className="h-4 w-20" />
+                        <Skeleton className="h-3 w-16" />
+                      </div>
+                      <Skeleton className="h-6 w-16" />
+                      <Skeleton className="h-8 w-8 rounded" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <Skeleton className="h-6 w-32" />
+              <Skeleton className="h-4 w-48" />
+            </CardHeader>
+            <CardContent className="flex gap-2 flex-col">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="flex items-center p-4 border border-gray-200 rounded-lg">
+                  <Skeleton className="h-8 w-8 rounded" />
+                  <div className="ml-4 space-y-2">
+                    <Skeleton className="h-4 w-32" />
+                    <Skeleton className="h-3 w-48" />
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
         </div>
       </div>
     )
@@ -102,17 +145,17 @@ export default function DashboardPage() {
   return (
     <div className="max-w-7xl w-full mx-auto">
       {/* Header */}
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 mb-8">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">
-            Welcome back, {session?.user?.name}!
+            Welcome back, {session?.user?.name || "User"}!
           </h1>
           <p className="mt-1 text-sm text-gray-600">
             Here's what's happening with your invoices today.
           </p>
         </div>
-        <Link href="/dashboard/new">
-          <Button>
+        <Link href="/dashboard/new" className="w-full sm:w-auto">
+          <Button className="w-full sm:w-auto">
             <Plus className="h-4 w-4 mr-2" />
             Create Invoice
           </Button>
@@ -127,7 +170,7 @@ export default function DashboardPage() {
               <FileText className="h-8 w-8 text-blue-600" />
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Total Invoices</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.totalInvoices}</p>
               </div>
             </div>
           </CardContent>
@@ -191,7 +234,7 @@ export default function DashboardPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {recentInvoices.length === 0 ? (
+            {recentInvoices?.length === 0 ? (
               <div className="text-center py-8">
                 <FileText className="mx-auto h-12 w-12 text-gray-400" />
                 <h3 className="mt-2 text-sm font-medium text-gray-900">No invoices yet</h3>
@@ -209,7 +252,7 @@ export default function DashboardPage() {
               </div>
             ) : (
               <div className="space-y-4">
-                {recentInvoices.map((invoice) => (
+                {recentInvoices?.map((invoice) => (
                   <div key={invoice.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
                     <div>
                       <div className="flex items-center space-x-3">
@@ -253,33 +296,33 @@ export default function DashboardPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="flex gap-2 flex-col">
-              <Link href="/dashboard/new">
-                <div className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
-                  <Plus className="h-8 w-8 text-blue-600" />
-                  <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-900">Create New Invoice</p>
-                    <p className="text-sm text-gray-500">Generate a professional invoice for your client</p>
-                  </div>
-                </div>
-              </Link>
-
-              <Link href="/dashboard/invoices">
-                <div className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
-                  <FileText className="h-8 w-8 text-green-600" />
-                  <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-900">View All Invoices</p>
-                    <p className="text-sm text-gray-500">Manage and track all your invoices</p>
-                  </div>
-                </div>
-              </Link>
-
-              <div className="flex items-center p-4 border border-gray-200 rounded-lg bg-gray-50">
-                <TrendingUp className="h-8 w-8 text-purple-600" />
+            <Link href="/dashboard/new">
+              <div className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                <Plus className="h-8 w-8 text-blue-600" />
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-900">Upgrade to Pro</p>
-                  <p className="text-sm text-gray-500">Unlimited invoices for just $5/month</p>
+                  <p className="text-sm font-medium text-gray-900">Create New Invoice</p>
+                  <p className="text-sm text-gray-500">Generate a professional invoice for your client</p>
                 </div>
               </div>
+            </Link>
+
+            <Link href="/dashboard/invoices">
+              <div className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                <FileText className="h-8 w-8 text-green-600" />
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-900">View All Invoices</p>
+                  <p className="text-sm text-gray-500">Manage and track all your invoices</p>
+                </div>
+              </div>
+            </Link>
+
+            <div className="flex items-center p-4 border border-gray-200 rounded-lg bg-gray-50">
+              <TrendingUp className="h-8 w-8 text-purple-600" />
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-900">Upgrade to Pro</p>
+                <p className="text-sm text-gray-500">Unlimited invoices for just $5/month</p>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>
