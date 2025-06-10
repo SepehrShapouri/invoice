@@ -23,16 +23,16 @@ import {
   Settings,
   LogOut,
   User,
-  CreditCard,
-  MoreVertical,
   TrendingUp,
   Crown,
-  Loader2
 } from "lucide-react"
 import {
   IconDotsVertical,
 } from "@tabler/icons-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu"
+import useInvoices from "@/hooks/use-invoices"
+import useUserSubscription from "@/hooks/use-userSubscription"
+import { Skeleton } from "./ui/skeleton"
 
 const navItems = [
   {
@@ -67,36 +67,9 @@ const settingsItems = [
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { data: session } = useSession()
   const pathname = usePathname()
-  const [invoiceCount, setInvoiceCount] = useState(0)
-  const [userPlan, setUserPlan] = useState<string>('free')
-  const [isLoadingUserPlan, setIsLoadingUserPlan] = useState(true)
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Fetch invoice count
-        const invoicesResponse = await fetch("/api/invoices")
-        if (invoicesResponse.ok) {
-          const invoicesData = await invoicesResponse.json()
-          setInvoiceCount(invoicesData.invoices?.length || 0)
-        }
-
-        // Fetch subscription data
-        const subscriptionResponse = await fetch("/api/user/subscription")
-        if (subscriptionResponse.ok) {
-          const subscriptionData = await subscriptionResponse.json()
-          setUserPlan(subscriptionData.subscription?.plan || 'free')
-          setIsLoadingUserPlan(false)
-        }
-      } catch (err) {
-        console.error("Failed to fetch data:", err)
-      }
-    }
-
-    if (session?.user) {
-      fetchData()
-    }
-  }, [session])
+  const { data: userSubscription, isLoading: isLoadingUserSubscription } = useUserSubscription()
+  // TODO: add a endpoint to just get the invoice count
+  const { data: invoices } = useInvoices()
 
   const handleSignOut = async () => {
     await signOut({
@@ -115,7 +88,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     return pathname.startsWith(url)
   }
 
-  const isPro = userPlan !== 'free' && !isLoadingUserPlan
+  const isPro = userSubscription?.plan !== 'free' && !isLoadingUserSubscription
 
   // Build dynamic settings items based on subscription
   const dynamicSettingsItems = [
@@ -156,9 +129,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       <Link href={item.url}>
                         <Icon className="h-4 w-4" />
                         <span>{item.title}</span>
-                        {item.title === "Invoices" && invoiceCount > 0 && (
+                        {item.title === "Invoices" && invoices?.length && invoices?.length > 0 && (
                           <span className="ml-auto text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">
-                            {invoiceCount}
+                            {invoices?.length}
                           </span>
                         )}
                       </Link>
@@ -174,12 +147,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarGroupLabel>Account</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {isLoadingUserPlan ? (
+              {isLoadingUserSubscription ? (
                 <SidebarMenuItem>
-                  <SidebarMenuButton>
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    <span>Loading...</span>
-                  </SidebarMenuButton>
+                  <Skeleton className="h-8 w-full" />
                 </SidebarMenuItem>
               ) : (
                 dynamicSettingsItems.map((item) => {
@@ -231,7 +201,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       </p>
                       <div className="flex items-center gap-1">
                         <p className="text-xs text-sidebar-foreground/60">
-                          {isLoadingUserPlan ? <Loader2 className="h-3 w-3 animate-spin" /> : isPro ? 'Pro Plan' : 'Free Plan'}
+                          {isLoadingUserSubscription ? <Skeleton className="h-4 w-16" /> : isPro ? 'Pro Plan' : 'Free Plan'}
                         </p>
                         {isPro && (
                           <Crown className="h-3 w-3 text-purple-600" />
