@@ -8,12 +8,21 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { ArrowRight, Mail, Lock, FileText, Zap, Shield, CheckCircle } from "lucide-react"
+import { useForm } from "react-hook-form"
+import { loginSchema, LoginSchemaType } from "@/schemas/auth"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { z } from "zod"
+import { toast } from "sonner"
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState("")
+  const form = useForm<LoginSchemaType>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  })
+
   const router = useRouter()
   const { data: session, isPending } = useSession()
 
@@ -38,26 +47,22 @@ export default function LoginPage() {
     return null
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setError("")
+  const handleSubmit = async (data: z.infer<typeof loginSchema>) => {
+    console.log(data)
 
     try {
-      const { data, error: authError } = await signIn.email({
-        email,
-        password,
+      const { data: signInData, error: authError } = await signIn.email({
+        email: data.email,
+        password: data.password,
       })
 
       if (authError) {
-        setError(authError.message || "Login failed")
+        toast.error(authError.message || "Login failed")
       } else {
         router.push("/dashboard")
       }
     } catch (err) {
-      setError("An unexpected error occurred")
-    } finally {
-      setIsLoading(false)
+      toast.error("An unexpected error occurred")
     }
   }
 
@@ -87,7 +92,7 @@ export default function LoginPage() {
             </div>
 
             {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-black font-medium">Email</Label>
                 <div className="relative">
@@ -96,12 +101,14 @@ export default function LoginPage() {
                     id="email"
                     type="email"
                     placeholder="you@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    {...form.register("email")}
                     required
                     className="pl-10 h-10 border-gray-200 focus:border-black focus:ring-black rounded-xl"
                   />
                 </div>
+                {form.formState.errors.email && (
+                  <p className="text-red-500 text-sm">{form.formState.errors.email.message}</p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -112,28 +119,24 @@ export default function LoginPage() {
                     id="password"
                     type="password"
                     placeholder="Enter your password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    {...form.register("password")}
                     required
                     className="pl-10 h-10 border-gray-200 focus:border-black focus:ring-black rounded-xl"
                   />
                 </div>
+                {form.formState.errors.password && (
+                  <p className="text-red-500 text-sm">{form.formState.errors.password.message}</p>
+                )}
               </div>
 
-              {error && (
-                <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-xl text-sm">
-                  {error}
-                </div>
-              )}
-
-              <Button 
-                type="submit" 
-                disabled={isLoading}
+              <Button
+                type="submit"
+                disabled={form.formState.isSubmitting}
                 className="w-full bg-black hover:bg-gray-800 text-white font-medium h-10 rounded-xl transition-all duration-300 group"
               >
                 <span className="flex items-center justify-center">
-                  {isLoading ? "Signing in..." : "Sign in"}
-                  {!isLoading && <ArrowRight className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" />}
+                  {form.formState.isSubmitting ? "Signing in..." : "Sign in"}
+                  {!form.formState.isSubmitting && <ArrowRight className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" />}
                 </span>
               </Button>
             </form>
@@ -142,8 +145,8 @@ export default function LoginPage() {
             <div className="text-center">
               <p className="text-gray-600">
                 Don't have an account?{" "}
-                <Link 
-                  href="/register" 
+                <Link
+                  href="/register"
                   className="text-black font-medium hover:text-gray-700 transition-colors underline underline-offset-2"
                 >
                   Create one now
@@ -153,8 +156,8 @@ export default function LoginPage() {
 
             {/* Back to Home */}
             <div className="text-center">
-              <Link 
-                href="/" 
+              <Link
+                href="/"
                 className="text-gray-500 hover:text-black transition-colors text-sm"
               >
                 ← Back to Invoicely
@@ -169,7 +172,7 @@ export default function LoginPage() {
         {/* Glossy background effect */}
         <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-800"></div>
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
-        
+
         <div className="relative flex items-center justify-center min-h-screen w-full p-12">
           <div className="max-w-md w-full space-y-8">
             {/* Main Feature */}
