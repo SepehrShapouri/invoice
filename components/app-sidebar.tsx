@@ -15,22 +15,23 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarRail,
 } from "@/components/ui/sidebar"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
-import { 
-  LayoutDashboard, 
-  FileText, 
-  Plus, 
-  Settings, 
+import {
+  LayoutDashboard,
+  FileText,
+  Plus,
+  Settings,
   LogOut,
   User,
   CreditCard,
+  MoreVertical,
   TrendingUp,
   Crown
 } from "lucide-react"
+import {
+  IconDotsVertical,
+} from "@tabler/icons-react"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu"
 
 const navItems = [
   {
@@ -62,7 +63,7 @@ const settingsItems = [
   }
 ]
 
-export function AppSidebar() {
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { data: session } = useSession()
   const pathname = usePathname()
   const [invoiceCount, setInvoiceCount] = useState(0)
@@ -125,11 +126,11 @@ export function AppSidebar() {
   ]
 
   return (
-    <Sidebar>
-      <SidebarHeader className="border-b border-sidebar-border">
-        <div className="flexI items-center px-4">
+    <Sidebar collapsible="offcanvas" {...props}>
+      <SidebarHeader>
+        <div className="flex items-center">
           <Link href="/dashboard" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">I</span>
             </div>
             <span className="text-xl font-bold text-sidebar-foreground">Invoicely</span>
@@ -145,7 +146,7 @@ export function AppSidebar() {
               {navItems.map((item) => {
                 const Icon = item.icon
                 const active = isActive(item.url, item.exact)
-                
+
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild isActive={active}>
@@ -173,7 +174,7 @@ export function AppSidebar() {
               {dynamicSettingsItems.map((item) => {
                 const Icon = item.icon
                 const active = isActive(item.url, item.exact)
-                
+
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild isActive={active}>
@@ -195,42 +196,56 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="border-t border-sidebar-border">
+      <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <div className="flex items-center space-x-3 px-2 py-2">
-              <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                {isPro ? (
-                  <Crown className="h-4 w-4 text-purple-600" />
-                ) : (
-                  <User className="h-4 w-4 text-gray-600" />
-                )}
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-sidebar-foreground truncate">
-                  {session?.user?.name || "User"}
-                </p>
-                <div className="flex items-center gap-1">
-                  <p className="text-xs text-sidebar-foreground/60">
-                    {isPro ? 'Pro Plan' : 'Free Plan'}
-                  </p>
-                  {isPro && (
-                    <Crown className="h-3 w-3 text-purple-600" />
-                  )}
-                </div>
-              </div>
-            </div>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton onClick={handleSignOut} className="w-full">
-              <LogOut className="h-4 w-4" />
-              <span>Sign Out</span>
-            </SidebarMenuButton>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <SidebarMenuButton
+                  size="lg"
+                  className="w-full data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                >
+                  <div className="flex items-center space-x-3 px-2 py-2 w-full">
+                    <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                      {isPro ? (
+                        <Crown className="h-4 w-4 text-purple-600" />
+                      ) : (
+                        <User className="h-4 w-4 text-gray-600" />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0 text-left">
+                      <p className="text-sm font-medium text-sidebar-foreground truncate">
+                        {session?.user?.name || "User"}
+                      </p>
+                      <div className="flex items-center gap-1">
+                        <p className="text-xs text-sidebar-foreground/60">
+                          {isPro ? 'Pro Plan' : 'Free Plan'}
+                        </p>
+                        {isPro && (
+                          <Crown className="h-3 w-3 text-purple-600" />
+                        )}
+                      </div>
+                    </div>
+                    <DropdownMenuTrigger asChild>
+                      <IconDotsVertical className="w-4 h-4" />
+                    </DropdownMenuTrigger>
+                  </div>
+                </SidebarMenuButton>
+              </DropdownMenuTrigger>
+
+              <DropdownMenuContent className="w-40 mt-1">
+                <DropdownMenuItem
+                  onClick={handleSignOut}
+                  className="flex items-center gap-2 cursor-pointer"
+                >
+                  <LogOut className="h-4 w-4" />
+                  <span>Sign Out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
-
-      <SidebarRail />
     </Sidebar>
   )
 } 

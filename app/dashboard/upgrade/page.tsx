@@ -93,7 +93,7 @@ export default function UpgradePage() {
   ]
 
   return (
-    <div className="max-w-6xl mx-auto">
+    <div className="max-w-6xl mx-auto w-full">
       <div className="text-center mb-12">
         <h1 className="text-4xl font-bold text-gray-900 mb-4">
           Upgrade to Pro
