@@ -7,60 +7,131 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { StripeConnect } from "@/components/stripe-connect"
 import { SubscriptionManagement } from "@/components/subscription-management"
 import { toast } from "sonner"
+import useUserSubscription from "@/hooks/use-userSubscription"
+import { Skeleton } from "@/components/ui/skeleton"
 
 export default function SettingsPage() {
   const { data: session } = useSession()
   const searchParams = useSearchParams()
   const [userPlan, setUserPlan] = useState<string>('Free Plan')
+  const { data: userSubscription, isLoading: isLoadingUserSubscription } = useUserSubscription()
+
+  const plan = userSubscription?.plan || 'free'
 
   useEffect(() => {
-    // Fetch subscription data
-    const fetchSubscriptionData = async () => {
-      try {
-        const response = await fetch('/api/user/subscription')
-        if (response.ok) {
-          const data = await response.json()
-          const plan = data.subscription?.plan || 'free'
-          
-          // Format plan display
-          if (plan === 'free') {
-            setUserPlan('Free Plan')
-          } else if (data.subscription?.stripePriceId === process.env.NEXT_PUBLIC_STRIPE_ANNUAL_PRICE_ID) {
-            setUserPlan('Pro Plan (Annual)')
-          } else {
-            setUserPlan('Pro Plan (Monthly)')
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching subscription data:', error)
-      }
+    if (isLoadingUserSubscription) return
+
+    if (plan === 'free') {
+      setUserPlan('Free Plan')
+    } else if (userSubscription?.stripePriceId === process.env.NEXT_PUBLIC_STRIPE_ANNUAL_PRICE_ID) {
+      setUserPlan('Pro Plan (Annual)')
+    } else {
+      setUserPlan('Pro Plan (Monthly)')
     }
 
-    if (session?.user) {
-      fetchSubscriptionData()
-    }
-
-    // Handle Stripe Connect return flows
     const stripeParam = searchParams.get("stripe")
     const subscriptionParam = searchParams.get("subscription")
-    
+
     if (stripeParam === "return") {
       toast.success("Welcome back! Please refresh your Stripe status to see updates.")
     } else if (stripeParam === "refresh") {
       toast.info("Please complete your Stripe account setup to start receiving payments.")
     }
 
-    // Handle subscription flows
     if (subscriptionParam === "success") {
       toast.success("Welcome to Pro! Your subscription is now active.")
-      // Refresh subscription data after successful upgrade
-      setTimeout(() => {
-        fetchSubscriptionData()
-      }, 1000)
     } else if (subscriptionParam === "cancelled") {
       toast.info("Subscription setup was cancelled. You can try again anytime.")
     }
-  }, [searchParams, session])
+
+  }, [isLoadingUserSubscription, plan, userSubscription, searchParams, session])
+
+  if (isLoadingUserSubscription) {
+    return (
+      <div>
+        {/* Header Skeleton */}
+        <div className="mb-8">
+          <Skeleton className="h-8 w-48 mb-2" /> {/* Settings title */}
+          <Skeleton className="h-4 w-96" /> {/* Description */}
+        </div>
+
+        <div className="space-y-6">
+          {/* Account Information Card Skeleton */}
+          <Card>
+            <CardHeader>
+              <Skeleton className="h-6 w-48 mb-2" /> {/* Card title */}
+              <Skeleton className="h-4 w-64" /> {/* Card description */}
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i}>
+                    <Skeleton className="h-4 w-24 mb-2" /> {/* Label */}
+                    <Skeleton className="h-5 w-48" /> {/* Value */}
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Subscription Management Card Skeleton */}
+          <Card>
+            <CardHeader>
+              <Skeleton className="h-6 w-56 mb-2" /> {/* Card title */}
+              <Skeleton className="h-4 w-72" /> {/* Card description */}
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1">
+                    <Skeleton className="h-5 w-32 mb-1" /> {/* Plan name */}
+                    <Skeleton className="h-4 w-48" /> {/* Plan description */}
+                  </div>
+                  <Skeleton className="h-9 w-28" /> {/* Action button */}
+                </div>
+                <Skeleton className="h-4 w-full" /> {/* Additional info */}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Stripe Connect Card Skeleton */}
+          <Card>
+            <CardHeader>
+              <Skeleton className="h-6 w-40 mb-2" /> {/* Card title */}
+              <Skeleton className="h-4 w-80" /> {/* Card description */}
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <Skeleton className="h-4 w-full" /> {/* Status message */}
+                <Skeleton className="h-9 w-40" /> {/* Connect button */}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Invoice Preferences Card Skeleton */}
+          <Card>
+            <CardHeader>
+              <Skeleton className="h-6 w-48 mb-2" /> {/* Card title */}
+              <Skeleton className="h-4 w-64" /> {/* Card description */}
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i}>
+                    <Skeleton className="h-4 w-32 mb-2" /> {/* Label */}
+                    <Skeleton className="h-5 w-24" /> {/* Value */}
+                  </div>
+                ))}
+              </div>
+              <div className="border-t pt-4">
+                <Skeleton className="h-4 w-full" /> {/* Future update message */}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div>
@@ -97,7 +168,7 @@ export default function SettingsPage() {
               <div>
                 <label className="text-sm font-medium text-gray-500">Joined</label>
                 <p className="text-sm text-gray-900">
-                  {session?.user?.createdAt 
+                  {session?.user?.createdAt
                     ? new Date(session.user.createdAt).toLocaleDateString()
                     : "Unknown"
                   }
