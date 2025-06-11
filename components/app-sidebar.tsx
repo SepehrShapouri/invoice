@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { useSession, signOut } from "@/lib/auth-client"
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useSession, signOut } from "@/lib/auth-client";
 import {
   Sidebar,
   SidebarContent,
@@ -15,7 +15,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 import {
   LayoutDashboard,
   FileText,
@@ -25,81 +25,95 @@ import {
   User,
   TrendingUp,
   Crown,
-} from "lucide-react"
+  Sun,
+  Moon,
+  LucideToggleLeft,
+} from "lucide-react";
+import { IconDotsVertical } from "@tabler/icons-react";
 import {
-  IconDotsVertical,
-} from "@tabler/icons-react"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu"
-import useInvoices from "@/hooks/use-invoices"
-import useUserSubscription from "@/hooks/use-userSubscription"
-import { Skeleton } from "./ui/skeleton"
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+import useInvoices from "@/hooks/use-invoices";
+import useUserSubscription from "@/hooks/use-userSubscription";
+import { Skeleton } from "./ui/skeleton";
+import { useTheme } from "next-themes";
+import { Button } from "./ui/button";
 
 const navItems = [
   {
     title: "Dashboard",
     url: "/dashboard",
     icon: LayoutDashboard,
-    exact: true
+    exact: true,
   },
   {
     title: "Invoices",
     url: "/dashboard/invoices",
     icon: FileText,
-    exact: false
+    exact: false,
   },
   {
     title: "Create Invoice",
     url: "/dashboard/new",
     icon: Plus,
-    exact: true
-  }
-]
+    exact: true,
+  },
+];
 
 const settingsItems = [
   {
     title: "Settings",
     url: "/dashboard/settings",
     icon: Settings,
-    exact: true
-  }
-]
+    exact: true,
+  },
+];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { data: session } = useSession()
-  const pathname = usePathname()
-  const { data: userSubscription, isLoading: isLoadingUserSubscription } = useUserSubscription()
+  const { setTheme } = useTheme();
+  const { data: session } = useSession();
+  const pathname = usePathname();
+  const { data: userSubscription, isLoading: isLoadingUserSubscription } =
+    useUserSubscription();
   // TODO: add a endpoint to just get the invoice count
-  const { data: invoices } = useInvoices()
+  const { data: invoices } = useInvoices();
 
   const handleSignOut = async () => {
     await signOut({
       fetchOptions: {
         onSuccess: () => {
-          window.location.href = "/"
-        }
-      }
-    })
-  }
+          window.location.href = "/";
+        },
+      },
+    });
+  };
 
   const isActive = (url: string, exact: boolean) => {
     if (exact) {
-      return pathname === url
+      return pathname === url;
     }
-    return pathname.startsWith(url)
-  }
+    return pathname.startsWith(url);
+  };
 
-  const isPro = userSubscription?.plan !== 'free' && !isLoadingUserSubscription
+  const isPro = userSubscription?.plan !== "free" && !isLoadingUserSubscription;
 
   // Build dynamic settings items based on subscription
   const dynamicSettingsItems = [
     ...settingsItems,
-    ...(isPro ? [] : [{
-      title: "Upgrade to Pro",
-      url: "/dashboard/upgrade",
-      icon: TrendingUp,
-      exact: true
-    }])
-  ]
+    ...(isPro
+      ? []
+      : [
+          {
+            title: "Upgrade to Pro",
+            url: "/dashboard/upgrade",
+            icon: TrendingUp,
+            exact: true,
+          },
+        ]),
+  ];
 
   return (
     <Sidebar collapsible="offcanvas" {...props}>
@@ -109,7 +123,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">I</span>
             </div>
-            <span className="text-xl font-bold text-sidebar-foreground">Invoicely</span>
+            <span className="text-xl font-bold text-sidebar-foreground">
+              Invoicely
+            </span>
           </Link>
         </div>
       </SidebarHeader>
@@ -120,8 +136,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarGroupContent>
             <SidebarMenu>
               {navItems.map((item) => {
-                const Icon = item.icon
-                const active = isActive(item.url, item.exact)
+                const Icon = item.icon;
+                const active = isActive(item.url, item.exact);
 
                 return (
                   <SidebarMenuItem key={item.title}>
@@ -129,15 +145,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       <Link href={item.url}>
                         <Icon className="h-4 w-4" />
                         <span>{item.title}</span>
-                        {item.title === "Invoices" && invoices?.length && invoices?.length > 0 && (
-                          <span className="ml-auto text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">
-                            {invoices?.length}
-                          </span>
-                        )}
+                        {item.title === "Invoices" &&
+                          invoices?.length &&
+                          invoices?.length > 0 && (
+                            <span className="ml-auto text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">
+                              {invoices?.length}
+                            </span>
+                          )}
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
-                )
+                );
               })}
             </SidebarMenu>
           </SidebarGroupContent>
@@ -153,8 +171,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 </SidebarMenuItem>
               ) : (
                 dynamicSettingsItems.map((item) => {
-                  const Icon = item.icon
-                  const active = isActive(item.url, item.exact)
+                  const Icon = item.icon;
+                  const active = isActive(item.url, item.exact);
 
                   return (
                     <SidebarMenuItem key={item.title}>
@@ -170,7 +188,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
-                  )
+                  );
                 })
               )}
             </SidebarMenu>
@@ -197,15 +215,23 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     </div>
                     <div className="flex-1 min-w-0 text-left">
                       <span className="text-sm font-medium text-sidebar-foreground truncate">
-                        {isLoadingUserSubscription ? <Skeleton className="h-4 w-22 mb-2 bg-gray-200" /> : session?.user?.name}
+                        {isLoadingUserSubscription ? (
+                          <Skeleton className="h-4 w-22 mb-2 bg-gray-200" />
+                        ) : (
+                          session?.user?.name
+                        )}
                       </span>
                       <div className="flex items-center gap-1">
                         <span className="text-xs text-sidebar-foreground/60">
-                          {isLoadingUserSubscription ? <Skeleton className="h-3 w-16 bg-gray-200" /> : isPro ? 'Pro Plan' : 'Free Plan'}
+                          {isLoadingUserSubscription ? (
+                            <Skeleton className="h-3 w-16 bg-gray-200" />
+                          ) : isPro ? (
+                            "Pro Plan"
+                          ) : (
+                            "Free Plan"
+                          )}
                         </span>
-                        {isPro && (
-                          <Crown className="h-3 w-3 text-purple-600" />
-                        )}
+                        {isPro && <Crown className="h-3 w-3 text-purple-600" />}
                       </div>
                     </div>
                     <DropdownMenuTrigger asChild>
@@ -223,11 +249,30 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <LogOut className="h-4 w-4" />
                   <span>Sign Out</span>
                 </DropdownMenuItem>
+                <DropdownMenu>
+                  <DropdownMenuTrigger className="w-full">
+                    <Button variant="ghost" size="sm" className="w-full">
+                      <LucideToggleLeft className="size-4"/>
+                      <span>Toggle theme</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => setTheme("light")}>
+                      Light
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setTheme("dark")}>
+                      Dark
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setTheme("system")}>
+                      System
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </DropdownMenuContent>
             </DropdownMenu>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
     </Sidebar>
-  )
-} 
+  );
+}
