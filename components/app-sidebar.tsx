@@ -39,7 +39,6 @@ import {
 import useInvoices from "@/hooks/use-invoices";
 import useUserSubscription from "@/hooks/use-userSubscription";
 import { Skeleton } from "./ui/skeleton";
-import { useTheme } from "next-themes";
 import { Button } from "./ui/button";
 
 const navItems = [
@@ -73,7 +72,6 @@ const settingsItems = [
 ];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { setTheme } = useTheme();
   const { data: session } = useSession();
   const pathname = usePathname();
   const { data: userSubscription, isLoading: isLoadingUserSubscription } =
@@ -249,25 +247,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <LogOut className="h-4 w-4" />
                   <span>Sign Out</span>
                 </DropdownMenuItem>
-                <DropdownMenu>
-                  <DropdownMenuTrigger className="w-full">
-                    <Button variant="ghost" size="sm" className="w-full">
-                      <LucideToggleLeft className="size-4"/>
-                      <span>Toggle theme</span>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => setTheme("light")}>
-                      Light
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setTheme("dark")}>
-                      Dark
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setTheme("system")}>
-                      System
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
               </DropdownMenuContent>
             </DropdownMenu>
           </SidebarMenuItem>
