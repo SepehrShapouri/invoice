@@ -1,32 +1,8 @@
+import { Invoice } from '@/types'
 import jsPDF from 'jspdf'
 
-interface InvoiceItem {
-  id: string
-  description: string
-  quantity: number
-  rate: number
-  amount: number
-}
 
-interface Invoice {
-  slug: string
-  clientName: string
-  clientEmail: string
-  items: InvoiceItem[]
-  subtotal: number
-  tax: number
-  total: number
-  currency: string
-  status: string
-  dueDate?: string
-  createdAt: string
-  user?: {
-    name: string
-    email: string
-  }
-}
-
-export function generateInvoicePDF(invoice: Invoice, userName?: string, userEmail?: string) {
+export function generateInvoicePDF(invoice: Invoice, userName: string | undefined, userEmail: string | undefined) {
   const doc = new jsPDF()
   
   // Set font
@@ -52,8 +28,8 @@ export function generateInvoicePDF(invoice: Invoice, userName?: string, userEmai
   doc.text('From:', 20, 75)
   doc.setFontSize(11)
   doc.setTextColor(0, 0, 0)
-  doc.text(userName || invoice.user?.name || 'N/A', 20, 85)
-  doc.text(userEmail || invoice.user?.email || 'N/A', 20, 92)
+  doc.text(userName || 'N/A', 20, 85)
+  doc.text(userEmail || 'N/A', 20, 92)
   
   // To section
   doc.setFontSize(14)
@@ -108,7 +84,7 @@ export function generateInvoicePDF(invoice: Invoice, userName?: string, userEmai
   doc.text('Subtotal:', totalsX, currentY)
   doc.text(`$${invoice.subtotal.toFixed(2)}`, totalsX + 30, currentY)
   
-  if (invoice.tax > 0) {
+  if (invoice.tax && invoice.tax > 0) {
     currentY += 7
     doc.text('Tax:', totalsX, currentY)
     doc.text(`$${invoice.tax.toFixed(2)}`, totalsX + 30, currentY)
@@ -135,7 +111,7 @@ export function generateInvoicePDF(invoice: Invoice, userName?: string, userEmai
   return doc
 }
 
-export function downloadInvoicePDF(invoice: Invoice, userName?: string, userEmail?: string) {
+export function downloadInvoicePDF(invoice: Invoice, userName: string | undefined, userEmail: string | undefined) {
   const doc = generateInvoicePDF(invoice, userName, userEmail)
   doc.save(`invoice-${invoice.slug}.pdf`)
 } 

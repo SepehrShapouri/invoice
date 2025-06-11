@@ -33,6 +33,12 @@ export interface Invoice {
   stripeCheckoutSessionId?: string
   createdAt: Date
   updatedAt: Date
+  user: {
+    name: string
+    email: string
+    stripeAccountId?: string
+    stripeAccountStatus?: string
+  }
 }
 
 export interface InvoiceItem {

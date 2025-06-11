@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, use } from "react"
 import { useParams } from "next/navigation"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -9,75 +9,22 @@ import { formatCurrency } from "@/lib/utils"
 import { CreditCard, Download, AlertCircle, Loader2 } from "lucide-react"
 import { downloadInvoicePDF } from "@/lib/pdf-utils"
 import { toast } from "sonner"
+import { Invoice } from "@/types"
+import { useSession } from "@/lib/auth-client"
+import useInvoice from "@/hooks/use-invoice"
 
-interface InvoiceItem {
-  id: string
-  description: string
-  quantity: number
-  rate: number
-  amount: number
+interface InvoicePageProps {
+  params: Promise<{
+    slug: string
+  }>
 }
 
-interface Invoice {
-  id: string
-  slug: string
-  clientName: string
-  clientEmail: string
-  items: InvoiceItem[]
-  subtotal: number
-  tax: number
-  total: number
-  currency: string
-  status: 'draft' | 'unpaid' | 'paid' | 'overdue'
-  dueDate?: string
-  paidAt?: string
-  createdAt: string
-  updatedAt: string
-  user: {
-    name: string
-    email: string
-    stripeAccountId?: string
-    stripeAccountStatus?: string
-  }
-}
-
-export default function PublicInvoicePage() {
-  const params = useParams()
-  const [invoice, setInvoice] = useState<Invoice | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+export default function PublicInvoicePage({ params }: InvoicePageProps) {
+  const { slug } = use(params)
+  const { data: session, isPending: isPendingSession } = useSession()
+  const { data: invoice, isLoading: isLoadingInvoice, isError: isErrorInvoice, error: invoiceError } = useInvoice(slug)
   const [isPaymentLoading, setIsPaymentLoading] = useState(false)
   const [paymentError, setPaymentError] = useState("")
-  const [error, setError] = useState("")
-
-  const slug = params.slug as string
-
-  useEffect(() => {
-    const fetchInvoice = async () => {
-      try {
-        const response = await fetch(`/api/public/invoices/${slug}`)
-        
-        if (!response.ok) {
-          if (response.status === 404) {
-            setError("Invoice not found")
-          } else {
-            throw new Error("Failed to fetch invoice")
-          }
-          return
-        }
-
-        const data = await response.json()
-        setInvoice(data.invoice)
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "An error occurred")
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    if (slug) {
-      fetchInvoice()
-    }
-  }, [slug])
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -126,7 +73,7 @@ export default function PublicInvoicePage() {
 
   const downloadPDF = () => {
     if (invoice) {
-      downloadInvoicePDF(invoice)
+      downloadInvoicePDF(invoice, session?.user?.name, session?.user?.email)
     }
   }
 
@@ -150,7 +97,7 @@ export default function PublicInvoicePage() {
     return ""
   }
 
-  if (isLoading) {
+  if (isLoadingInvoice || isPendingSession) {
     return (
       <div className="min-h-screen bg-gray-50 py-12">
         <div className="max-w-4xl mx-auto px-4">
@@ -164,13 +111,13 @@ export default function PublicInvoicePage() {
     )
   }
 
-  if (error || !invoice) {
+  if (isErrorInvoice || !invoice) {
     return (
       <div className="min-h-screen bg-gray-50 py-12">
         <div className="max-w-4xl mx-auto px-4">
           <div className="text-center">
             <h1 className="text-2xl font-bold text-gray-900 mb-4">
-              {error || "Invoice not found"}
+              {isErrorInvoice ? invoiceError.message : "Invoice not found"}
             </h1>
             <p className="text-gray-600">
               This invoice may have been moved or deleted.
@@ -275,7 +222,7 @@ export default function PublicInvoicePage() {
                   <span>Subtotal:</span>
                   <span>{formatCurrency(invoice.subtotal, invoice.currency)}</span>
                 </div>
-                {invoice.tax > 0 && (
+                {invoice.tax && invoice.tax > 0 && (
                   <div className="flex justify-between text-sm">
                     <span>Tax:</span>
                     <span>{formatCurrency(invoice.tax, invoice.currency)}</span>

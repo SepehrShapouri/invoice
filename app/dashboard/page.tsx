@@ -19,10 +19,13 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import useInvoices from "@/hooks/use-invoices"
+import useUserSubscription from "@/hooks/use-userSubscription"
 
 export default function DashboardPage() {
   const { data: session, isPending: isPendingSession } = useSession()
   const { data: invoices, isLoading: isLoadingInvoices } = useInvoices()
+  const { data: userSubscription, isLoading: isLoadingUserSubscription } =
+    useUserSubscription();
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -53,6 +56,8 @@ export default function DashboardPage() {
   const recentInvoices = invoices
     ?.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     .slice(0, 5) || []
+
+  const isPro = userSubscription?.plan !== "free" && !isLoadingUserSubscription;
 
   if (isLoadingInvoices || isPendingSession) {
     return (
@@ -312,17 +317,28 @@ export default function DashboardPage() {
                 </div>
               </div>
             </Link>
-
-            <div className="flex items-center p-4 border border-gray-200 rounded-lg bg-gray-50">
-              <TrendingUp className="h-8 w-8 text-purple-600" />
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-900">Upgrade to Pro</p>
-                <p className="text-sm text-gray-500">Unlimited invoices for just $5/month</p>
+            {isLoadingUserSubscription ? (
+              <div className="flex items-center p-4 border border-gray-200 rounded-lg bg-gray-50">
+                <Skeleton className="h-8 w-8" />
+                <div className="ml-4 space-y-2">
+                  <Skeleton className="h-4 w-24" />
+                  <Skeleton className="h-3 w-32" />
+                </div>
               </div>
-            </div>
+            ) : (
+              !isPro && (
+                <div className="flex items-center p-4 border border-gray-200 rounded-lg bg-gray-50">
+                  <TrendingUp className="h-8 w-8 text-purple-600" />
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-gray-900">Upgrade to Pro</p>
+                    <p className="text-sm text-gray-500">Unlimited invoices for just $5/month</p>
+                  </div>
+                </div>
+              )
+            )}
           </CardContent>
         </Card>
       </div>
-    </div>
+    </div >
   )
 } 
