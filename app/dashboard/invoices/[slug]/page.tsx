@@ -61,7 +61,7 @@ export default function InvoiceViewPage({ params }: InvoiceViewPageProps) {
 
   if (isLoadingInvoice) {
     return (
-      <div className="max-w-xl mx-auto w-full">
+      <div className="max-w-2xl mx-auto w-full">
         {/* Header Skeleton */}
         <div className="flex justify-between items-start mb-8">
           <div>

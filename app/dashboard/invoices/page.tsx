@@ -22,19 +22,7 @@ import Link from "next/link"
 import { toast } from "sonner"
 import useInvoices from "@/hooks/use-invoices"
 import { Skeleton } from "@/components/ui/skeleton"
-
-interface Invoice {
-  id: string
-  slug: string
-  clientName: string
-  clientEmail: string
-  total: number
-  currency: string
-  status: 'draft' | 'unpaid' | 'paid' | 'overdue'
-  dueDate?: Date
-  createdAt: string
-  updatedAt: string
-}
+import { Invoice } from "@/types"
 
 export default function InvoicesPage() {
   const { data: invoices, isLoading: isLoadingInvoices, error: errorInvoices } = useInvoices()
