@@ -1,14 +1,12 @@
 "use client";
 
-import { ReactNode } from "react";
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/dashboard-header";
-import { ThemeProvider } from "@/components/theme-provider";
+import {
+  SidebarInset,
+  SidebarProvider
+} from "@/components/ui/sidebar";
+import { ReactNode } from "react";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -16,12 +14,6 @@ interface DashboardLayoutProps {
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
-    <ThemeProvider
-      attribute="class"
-      defaultTheme="system"
-      enableSystem
-      disableTransitionOnChange
-    >
       <SidebarProvider
         style={
           {
@@ -42,6 +34,5 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           </div>
         </SidebarInset>
       </SidebarProvider>
-    </ThemeProvider>
   );
 }
