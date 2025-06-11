@@ -165,7 +165,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarMenu>
               {isLoadingUserSubscription ? (
                 <SidebarMenuItem>
-                  <Skeleton className="h-8 w-full bg-gray-200" />
+                  <Skeleton className="h-8 w-full bg-sidebar-accent" />
                 </SidebarMenuItem>
               ) : (
                 dynamicSettingsItems.map((item) => {
@@ -214,7 +214,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     <div className="flex-1 min-w-0 text-left">
                       <span className="text-sm font-medium text-sidebar-foreground truncate">
                         {isLoadingUserSubscription ? (
-                          <Skeleton className="h-4 w-22 mb-2 bg-gray-200" />
+                          <Skeleton className="h-4 w-22 mb-2 bg-sidebar-accent" />
                         ) : (
                           session?.user?.name
                         )}
@@ -222,7 +222,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       <div className="flex items-center gap-1">
                         <span className="text-xs text-sidebar-foreground/60">
                           {isLoadingUserSubscription ? (
-                            <Skeleton className="h-3 w-16 bg-gray-200" />
+                            <Skeleton className="h-3 w-16 bg-sidebar-accent" />
                           ) : isPro ? (
                             "Pro Plan"
                           ) : (

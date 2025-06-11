@@ -21,7 +21,7 @@ import Link from "next/link"
 import useInvoices from "@/hooks/use-invoices"
 
 export default function DashboardPage() {
-  const { data: session } = useSession()
+  const { data: session, isPending: isPendingSession } = useSession()
   const { data: invoices, isLoading: isLoadingInvoices } = useInvoices()
 
   console.log("Raw invoices from hook:", invoices)
@@ -57,7 +57,7 @@ export default function DashboardPage() {
     ?.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     .slice(0, 5) || []
 
-  if (isLoadingInvoices) {
+  if (isLoadingInvoices || isPendingSession) {
     return (
       <div className="max-w-7xl w-full mx-auto">
         {/* Header Skeleton */}
@@ -148,7 +148,7 @@ export default function DashboardPage() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 mb-8">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">
-            Welcome back, {session?.user?.name || "User"}!
+            Welcome back, {session?.user?.name}!
           </h1>
           <p className="mt-1 text-sm text-gray-600">
             Here's what's happening with your invoices today.
