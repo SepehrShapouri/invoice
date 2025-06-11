@@ -1,8 +1,6 @@
 "use client"
 
-import { useSession } from "@/lib/auth-client"
-import { useRouter } from "next/navigation"
-import { useEffect, ReactNode } from "react"
+import { ReactNode } from "react"
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
 import { SiteHeader } from "@/components/dashboard-header"
@@ -12,27 +10,6 @@ interface DashboardLayoutProps {
 }
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
-  const { data: session, isPending } = useSession()
-  const router = useRouter()
-
-  useEffect(() => {
-    if (!isPending && !session) {
-      router.push("/login")
-    }
-  }, [session, isPending, router])
-
-  if (isPending) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-lg text-gray-600">Loading...</div>
-      </div>
-    )
-  }
-
-  if (!session) {
-    return null
-  }
-
   return (
     <SidebarProvider
       style={

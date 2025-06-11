@@ -196,13 +196,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       )}
                     </div>
                     <div className="flex-1 min-w-0 text-left">
-                      <p className="text-sm font-medium text-sidebar-foreground truncate">
+                      <span className="text-sm font-medium text-sidebar-foreground truncate">
                         {session?.user?.name || "User"}
-                      </p>
+                      </span>
                       <div className="flex items-center gap-1">
-                        <p className="text-xs text-sidebar-foreground/60">
+                        <span className="text-xs text-sidebar-foreground/60">
                           {isLoadingUserSubscription ? <Skeleton className="h-4 w-16" /> : isPro ? 'Pro Plan' : 'Free Plan'}
-                        </p>
+                        </span>
                         {isPro && (
                           <Crown className="h-3 w-3 text-purple-600" />
                         )}

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { signIn, useSession } from "@/lib/auth-client"
 import { Button } from "@/components/ui/button"
@@ -24,14 +24,16 @@ export default function LoginPage() {
   })
 
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { data: session, isPending } = useSession()
 
   // Redirect if already authenticated
   useEffect(() => {
     if (!isPending && session) {
-      router.push("/dashboard")
+      const from = searchParams.get("from") || "/dashboard"
+      router.push(from)
     }
-  }, [session, isPending, router])
+  }, [session, isPending, router, searchParams])
 
   // Show loading while checking auth status
   if (isPending) {
@@ -59,7 +61,8 @@ export default function LoginPage() {
       if (authError) {
         toast.error(authError.message || "Login failed")
       } else {
-        router.push("/dashboard")
+        const from = searchParams.get("from") || "/dashboard"
+        router.push(from)
       }
     } catch (err) {
       toast.error("An unexpected error occurred")
