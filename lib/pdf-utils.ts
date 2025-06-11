@@ -18,7 +18,7 @@ interface Invoice {
   total: number
   currency: string
   status: string
-  dueDate?: string
+  dueDate?: Date
   createdAt: string
   user?: {
     name: string

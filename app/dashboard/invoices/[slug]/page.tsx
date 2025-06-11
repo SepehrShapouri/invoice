@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, use } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { useSession } from "@/lib/auth-client"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -12,71 +12,21 @@ import Link from "next/link"
 import { downloadInvoicePDF } from "@/lib/pdf-utils"
 import { toast } from "sonner"
 import { Skeleton } from "@/components/ui/skeleton"
+import useInvoice from "@/hooks/use-invoice"
+import useSendInvoice from "@/hooks/use-send-invoice"
 
-interface InvoiceItem {
-  id: string
-  description: string
-  quantity: number
-  rate: number
-  amount: number
+interface InvoiceViewPageProps {
+  params: Promise<{
+    slug: string
+  }>
 }
 
-interface Invoice {
-  id: string
-  slug: string
-  clientName: string
-  clientEmail: string
-  items: InvoiceItem[]
-  subtotal: number
-  tax: number
-  total: number
-  currency: string
-  status: 'draft' | 'unpaid' | 'paid' | 'overdue'
-  dueDate?: string
-  paidAt?: string
-  createdAt: string
-  updatedAt: string
-}
-
-export default function InvoiceViewPage() {
-  const params = useParams()
+export default function InvoiceViewPage({ params }: InvoiceViewPageProps) {
+  const { slug } = use(params)
   const router = useRouter()
   const { data: session } = useSession()
-  const [invoice, setInvoice] = useState<Invoice | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [isSending, setIsSending] = useState(false)
-  const [error, setError] = useState("")
-  const [successMessage, setSuccessMessage] = useState("")
-
-  const slug = params.slug as string
-
-  useEffect(() => {
-    const fetchInvoice = async () => {
-      try {
-        const response = await fetch(`/api/invoices/${slug}`)
-
-        if (!response.ok) {
-          if (response.status === 404) {
-            setError("Invoice not found")
-          } else {
-            throw new Error("Failed to fetch invoice")
-          }
-          return
-        }
-
-        const data = await response.json()
-        setInvoice(data.invoice)
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "An error occurred")
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    if (slug) {
-      fetchInvoice()
-    }
-  }, [slug])
+  const { data: invoice, isLoading: isLoadingInvoice, isError: isErrorInvoice, error: invoiceError } = useInvoice(slug)
+  const { mutate: sendInvoice, isPending: isSendingInvoice, isSuccess: isSuccessInvoice, isError: isErrorInvoiceSending, error: invoiceErrorSending } = useSendInvoice()
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -99,46 +49,17 @@ export default function InvoiceViewPage() {
 
   const downloadPDF = () => {
     if (invoice && session?.user) {
-      downloadInvoicePDF(invoice, session.user.name, session.user.email)
+      downloadInvoicePDF({
+        ...invoice,
+        tax: invoice.tax ?? 0,
+        createdAt: new Date(invoice.createdAt).toISOString(),
+        dueDate: invoice.dueDate
+      }, session.user.name, session.user.email)
       toast.success("PDF downloaded successfully!")
     }
   }
 
-  const sendToClient = async () => {
-    if (!invoice) return
-
-    setIsSending(true)
-    setError("")
-
-    try {
-      const response = await fetch(`/api/invoices/${invoice.slug}/send`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to send invoice')
-      }
-
-      toast.success(`Invoice sent successfully to ${invoice.clientEmail}`)
-
-      // Refresh invoice data
-      const updatedResponse = await fetch(`/api/invoices/${slug}`)
-      if (updatedResponse.ok) {
-        const updatedData = await updatedResponse.json()
-        setInvoice(updatedData.invoice)
-      }
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to send invoice'
-      setError(errorMessage)
-      toast.error(errorMessage)
-    } finally {
-      setIsSending(false)
-    }
-  }
-
-  if (isLoading) {
+  if (isLoadingInvoice) {
     return (
       <div className="max-w-xl mx-auto w-full">
         {/* Header Skeleton */}
@@ -251,12 +172,12 @@ export default function InvoiceViewPage() {
     )
   }
 
-  if (error || !invoice) {
+  if (isErrorInvoice || !invoice) {
     return (
       <div className="max-w-4xl mx-auto w-full">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">
-            {error || "Invoice not found"}
+            {invoiceError?.message || "Invoice not found"}
           </h1>
           <Button onClick={() => router.push("/dashboard")}>
             <ArrowLeft className="h-4 w-4 mr-2" />
@@ -389,7 +310,7 @@ export default function InvoiceViewPage() {
                 <span>Subtotal:</span>
                 <span>{formatCurrency(invoice.subtotal, invoice.currency)}</span>
               </div>
-              {invoice.tax > 0 && (
+              {invoice.tax && invoice.tax > 0 && (
                 <div className="flex justify-between text-sm">
                   <span>Tax:</span>
                   <span>{formatCurrency(invoice.tax, invoice.currency)}</span>
@@ -412,20 +333,20 @@ export default function InvoiceViewPage() {
             <CardDescription>Send this invoice to your client for payment</CardDescription>
           </CardHeader>
           <CardContent>
-            {successMessage && (
+            {isSuccessInvoice && (
               <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded text-green-700 text-sm">
-                {successMessage}
+                Invoice sent successfully to {invoice.clientEmail}
               </div>
             )}
-            {error && (
+            {isErrorInvoiceSending && (
               <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded text-red-700 text-sm">
-                {error}
+                {invoiceErrorSending?.message}
               </div>
             )}
             <div className="flex space-x-4">
-              <Button onClick={sendToClient} disabled={isSending}>
+              <Button onClick={() => sendInvoice(slug)} disabled={isSendingInvoice}>
                 <Send className="h-4 w-4 mr-2" />
-                {isSending ? 'Sending...' : 'Send to Client'}
+                {isSendingInvoice ? 'Sending...' : 'Send to Client'}
               </Button>
               <Button variant="outline">
                 Create Payment Link
