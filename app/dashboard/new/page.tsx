@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { calculateInvoiceTotals, generateInvoiceSlug } from "@/lib/utils"
 import { CalendarIcon, ChevronDownIcon, Plus, Trash2 } from "lucide-react"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
@@ -146,7 +145,7 @@ export default function NewInvoicePage() {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-8">
-        <div className="bg-gray-50 rounded-lg p-6">
+        <div className="bg-sidebar-accent rounded-lg p-6">
           <div className="mb-6">
             <h2 className="text-lg font-semibold">Client Information</h2>
             <p className="text-sm text-gray-600">Enter your client's details</p>
@@ -182,7 +181,7 @@ export default function NewInvoicePage() {
                   Due Date
                 </Label>
                 <Popover open={openDate} onOpenChange={setOpenDate}>
-                  <PopoverTrigger asChild>
+                  <PopoverTrigger className="bg-secondary" asChild>
                     <Button
                       variant="outline"
                       id="date"
@@ -233,7 +232,7 @@ export default function NewInvoicePage() {
             </Button>
           </div>
           <div className="space-y-4">
-            <div className="border-b border-gray-200 pb-4 hidden md:grid md:grid-cols-12 gap-4 items-center">
+            <div className="border-b border-border pb-4 hidden md:grid md:grid-cols-12 gap-4 items-center">
               <strong className="col-span-5">Description</strong>
               <strong className="col-span-2">Qty</strong>
               <strong className="col-span-2">Rate</strong>
@@ -285,7 +284,7 @@ export default function NewInvoicePage() {
                     <div className="col-span-1 md:col-span-2">
                       <div className="flex flex-col gap-2">
                         <Label className="md:hidden">Amount</Label>
-                        <div className="px-3 py-2 bg-gray-50 rounded-md text-sm">
+                        <div className="px-3 py-2 bg-secondary rounded-md text-sm">
                           ${item.amount.toFixed(2)}
                         </div>
                       </div>
