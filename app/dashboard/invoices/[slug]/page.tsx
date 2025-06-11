@@ -11,6 +11,7 @@ import { ArrowLeft, Download, Send, Eye, Copy } from "lucide-react"
 import Link from "next/link"
 import { downloadInvoicePDF } from "@/lib/pdf-utils"
 import { toast } from "sonner"
+import { Skeleton } from "@/components/ui/skeleton"
 
 interface InvoiceItem {
   id: string
@@ -53,7 +54,7 @@ export default function InvoiceViewPage() {
     const fetchInvoice = async () => {
       try {
         const response = await fetch(`/api/invoices/${slug}`)
-        
+
         if (!response.ok) {
           if (response.status === 404) {
             setError("Invoice not found")
@@ -105,23 +106,23 @@ export default function InvoiceViewPage() {
 
   const sendToClient = async () => {
     if (!invoice) return
-    
+
     setIsSending(true)
     setError("")
-    
+
     try {
       const response = await fetch(`/api/invoices/${invoice.slug}/send`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       })
-      
+
       if (!response.ok) {
         const errorData = await response.json()
         throw new Error(errorData.error || 'Failed to send invoice')
       }
-      
+
       toast.success(`Invoice sent successfully to ${invoice.clientEmail}`)
-      
+
       // Refresh invoice data
       const updatedResponse = await fetch(`/api/invoices/${slug}`)
       if (updatedResponse.ok) {
@@ -139,12 +140,113 @@ export default function InvoiceViewPage() {
 
   if (isLoading) {
     return (
-      <div className="max-w-4xl mx-auto w-full">
-        <div className="animate-pulse">
-          <div className="h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
-          <div className="h-4 bg-gray-200 rounded w-1/2 mb-8"></div>
-          <div className="h-96 bg-gray-200 rounded"></div>
+      <div className="max-w-xl mx-auto w-full">
+        {/* Header Skeleton */}
+        <div className="flex justify-between items-start mb-8">
+          <div>
+            <div className="flex items-center space-x-4 mb-2">
+              <Skeleton className="h-9 w-32" /> {/* Back button */}
+            </div>
+            <Skeleton className="h-8 w-48 mb-2" /> {/* Invoice # */}
+            <Skeleton className="h-4 w-36" /> {/* Created date */}
+          </div>
+          <div className="flex items-center space-x-3">
+            <Skeleton className="h-6 w-20" /> {/* Status badge */}
+            <div className="flex space-x-2">
+              <Skeleton className="h-9 w-28" /> {/* Action button */}
+              <Skeleton className="h-9 w-28" /> {/* Action button */}
+              <Skeleton className="h-9 w-28" /> {/* Action button */}
+            </div>
+          </div>
         </div>
+
+        {/* Invoice Content Skeleton */}
+        <Card className="mb-8">
+          <CardContent className="p-8">
+            {/* Invoice Header */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+              <div>
+                <Skeleton className="h-6 w-24 mb-4" /> {/* From label */}
+                <div className="space-y-2">
+                  <Skeleton className="h-5 w-40" /> {/* Name */}
+                  <Skeleton className="h-5 w-48" /> {/* Email */}
+                </div>
+              </div>
+              <div>
+                <Skeleton className="h-6 w-24 mb-4" /> {/* To label */}
+                <div className="space-y-2">
+                  <Skeleton className="h-5 w-40" /> {/* Client name */}
+                  <Skeleton className="h-5 w-48" /> {/* Client email */}
+                </div>
+              </div>
+            </div>
+
+            {/* Invoice Details */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 p-4 bg-gray-50 rounded-lg">
+              <div>
+                <Skeleton className="h-4 w-28 mb-2" />
+                <Skeleton className="h-4 w-20" />
+              </div>
+              <div>
+                <Skeleton className="h-4 w-28 mb-2" />
+                <Skeleton className="h-4 w-20" />
+              </div>
+              <div>
+                <Skeleton className="h-4 w-28 mb-2" />
+                <Skeleton className="h-4 w-20" />
+              </div>
+            </div>
+
+            {/* Invoice Items */}
+            <div className="mb-8">
+              <Skeleton className="h-6 w-32 mb-4" /> {/* Items label */}
+              <div className="space-y-4">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="flex justify-between items-center">
+                    <Skeleton className="h-4 w-96" /> {/* Description */}
+                    <div className="flex space-x-8">
+                      <Skeleton className="h-4 w-16" /> {/* Qty */}
+                      <Skeleton className="h-4 w-24" /> {/* Rate */}
+                      <Skeleton className="h-4 w-24" /> {/* Amount */}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Invoice Totals */}
+            <div className="flex justify-end">
+              <div className="w-64 space-y-2">
+                <div className="flex justify-between">
+                  <Skeleton className="h-4 w-16" />
+                  <Skeleton className="h-4 w-24" />
+                </div>
+                <div className="flex justify-between">
+                  <Skeleton className="h-4 w-16" />
+                  <Skeleton className="h-4 w-24" />
+                </div>
+                <div className="flex justify-between pt-2">
+                  <Skeleton className="h-5 w-16" />
+                  <Skeleton className="h-5 w-24" />
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Actions Card Skeleton */}
+        <Card>
+          <CardHeader>
+            <Skeleton className="h-6 w-32 mb-2" /> {/* Title */}
+            <Skeleton className="h-4 w-64" /> {/* Description */}
+          </CardHeader>
+          <CardContent>
+            <div className="flex space-x-4">
+              <Skeleton className="h-10 w-32" /> {/* Action button */}
+              <Skeleton className="h-10 w-32" /> {/* Action button */}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     )
   }
@@ -185,7 +287,7 @@ export default function InvoiceViewPage() {
             Created on {new Date(invoice.createdAt).toLocaleDateString()}
           </p>
         </div>
-        
+
         <div className="flex items-center space-x-3">
           {getStatusBadge(invoice.status)}
           <div className="flex space-x-2">
@@ -219,7 +321,7 @@ export default function InvoiceViewPage() {
                 <p className="text-gray-600">{session?.user?.email}</p>
               </div>
             </div>
-            
+
             <div>
               <h2 className="text-lg font-semibold text-gray-900 mb-4">To</h2>
               <div className="text-sm">
