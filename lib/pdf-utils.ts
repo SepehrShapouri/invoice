@@ -111,7 +111,7 @@ export function generateInvoicePDF(invoice: Invoice, userName: string | undefine
   return doc
 }
 
-export function downloadInvoicePDF(invoice: Invoice, userName?: string, userEmail?: string) {
+export function downloadInvoicePDF(invoice: Invoice, userName: string | undefined, userEmail: string | undefined) {
   const doc = generateInvoicePDF(invoice, userName, userEmail)
   doc.save(`invoice-${invoice.slug}.pdf`)
 } 

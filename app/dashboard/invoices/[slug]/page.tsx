@@ -49,10 +49,7 @@ export default function InvoiceViewPage({ params }: InvoiceViewPageProps) {
 
   const downloadPDF = () => {
     if (invoice && session?.user) {
-      downloadInvoicePDF({
-        ...invoice,
-        tax: invoice.tax ?? 0,
-      }, session.user.name, session.user.email)
+      downloadInvoicePDF(invoice, session.user.name, session.user.email)
       toast.success("PDF downloaded successfully!")
     }
   }
