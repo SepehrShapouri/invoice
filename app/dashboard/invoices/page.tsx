@@ -90,7 +90,8 @@ export default function InvoicesPage() {
       draft: 0,
       totalAmount: 0,
       paidAmount: 0,
-      pendingAmount: 0
+      pendingAmount: 0,
+      totalRevenue: 0
     }
 
     const stats = {
@@ -101,7 +102,8 @@ export default function InvoicesPage() {
       draft: invoices.filter(inv => inv.status === 'draft').length,
       totalAmount: invoices.reduce((sum, inv) => sum + inv.total, 0),
       paidAmount: invoices.filter(inv => inv.status === 'paid').reduce((sum, inv) => sum + inv.total, 0),
-      pendingAmount: invoices.filter(inv => inv.status === 'unpaid' || inv.status === 'overdue').reduce((sum, inv) => sum + inv.total, 0)
+      pendingAmount: invoices.filter(inv => inv.status === 'unpaid' || inv.status === 'overdue').reduce((sum, inv) => sum + inv.total, 0),
+      totalRevenue: invoices.filter(inv => inv.status === 'paid').reduce((sum, inv) => sum + inv.total, 0)
     }
     return stats
   }
@@ -293,7 +295,7 @@ export default function InvoicesPage() {
               <DollarSign className="h-8 w-8 text-purple-600" />
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Total Revenue</p>
-                <p className="text-2xl font-bold text-gray-900">{formatCurrency(stats.totalAmount)}</p>
+                <p className="text-2xl font-bold text-gray-900">{formatCurrency(stats.totalRevenue)}</p>
               </div>
             </div>
           </CardContent>

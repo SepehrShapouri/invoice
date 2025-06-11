@@ -24,9 +24,6 @@ export default function DashboardPage() {
   const { data: session, isPending: isPendingSession } = useSession()
   const { data: invoices, isLoading: isLoadingInvoices } = useInvoices()
 
-  console.log("Raw invoices from hook:", invoices)
-  console.log("Loading state:", isLoadingInvoices)
-
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "paid":
