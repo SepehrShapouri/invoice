@@ -52,8 +52,6 @@ export default function InvoiceViewPage({ params }: InvoiceViewPageProps) {
       downloadInvoicePDF({
         ...invoice,
         tax: invoice.tax ?? 0,
-        createdAt: new Date(invoice.createdAt).toISOString(),
-        dueDate: invoice.dueDate
       }, session.user.name, session.user.email)
       toast.success("PDF downloaded successfully!")
     }
