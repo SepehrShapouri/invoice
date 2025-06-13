@@ -33,7 +33,7 @@ export interface Invoice {
   stripeCheckoutSessionId?: string
   createdAt: Date
   updatedAt: Date
-  user: {
+  user?: {
     name: string
     email: string
     stripeAccountId?: string
