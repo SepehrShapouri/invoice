@@ -1,8 +1,8 @@
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { MarketingLayout } from "@/components/layout/marketing-layout"
-import { 
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { MarketingLayout } from "@/components/layout/marketing-layout";
+import {
   ArrowRight,
   Send,
   CheckCircle,
@@ -11,8 +11,8 @@ import {
   Shield,
   Clock,
   BarChart,
-  Globe
-} from "lucide-react"
+  Globe,
+} from "lucide-react";
 
 export default function HowItWorksPage() {
   return (
@@ -20,16 +20,16 @@ export default function HowItWorksPage() {
       {/* Hero Section */}
       <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-5xl md:text-6xl font-black text-black mb-6">
+          <h1 className="text-5xl md:text-6xl font-black text-foreground mb-6">
             How
             <br />
-            <span className="bg-gradient-to-r from-gray-900 via-gray-600 to-gray-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-foreground via-muted-foreground to-muted bg-clip-text text-transparent">
               Invoicely Works
             </span>
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-10">
-            Create professional invoices, get paid faster, and grow your business. 
-            It's that simple.
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
+            Create professional invoices, get paid faster, and grow your
+            business. It's that simple.
           </p>
         </div>
       </section>
@@ -41,63 +41,77 @@ export default function HowItWorksPage() {
           <div className="grid md:grid-cols-2 gap-16 items-center mb-24">
             <div>
               <div className="flex items-center mb-6">
-                <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center text-white font-bold text-xl mr-4">
+                <div className="w-12 h-12 bg-foreground rounded-md flex items-center justify-center text-background font-bold text-xl mr-4">
                   1
                 </div>
-                <h2 className="text-3xl font-bold text-black">Create Your Invoice</h2>
+                <h2 className="text-3xl font-bold text-foreground">
+                  Create Your Invoice
+                </h2>
               </div>
-              <p className="text-xl text-gray-600 mb-6 leading-relaxed">
-                Start by filling in your client's details and adding line items for your work. 
-                Our intuitive interface makes it quick and easy.
+              <p className="text-xl text-muted-foreground mb-6 leading-relaxed">
+                Start by filling in your client's details and adding line items
+                for your work. Our intuitive interface makes it quick and easy.
               </p>
               <ul className="space-y-3">
                 {[
                   "Professional invoice templates",
                   "Automatic calculations",
                   "Custom line items",
-                  "Tax and discount options"
+                  "Tax and discount options",
                 ].map((feature, index) => (
                   <li key={index} className="flex items-center">
-                    <CheckCircle className="w-5 h-5 text-green-500 mr-3" />
-                    <span className="text-gray-700">{feature}</span>
+                    <CheckCircle className="w-5 h-5 text-primary mr-3" />
+                    <span className="text-muted-foreground">{feature}</span>
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-3xl p-8">
-              <div className="bg-white rounded-2xl p-6 shadow-lg">
+            <div className="rounded-md p-8">
+              <div className="bg-card rounded-md p-6 shadow-lg">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-bold text-black">New Invoice</h3>
-                  <span className="text-sm text-gray-500">#INV-001</span>
+                  <h3 className="font-bold text-foreground">New Invoice</h3>
+                  <span className="text-sm text-muted-foreground">
+                    #INV-001
+                  </span>
                 </div>
                 <div className="space-y-4">
                   <div>
-                    <div className="text-sm text-gray-500 mb-1">Client</div>
-                    <div className="h-3 bg-black rounded w-32"></div>
+                    <div className="text-sm text-muted-foreground mb-1">
+                      Client
+                    </div>
+                    <div className="h-3 bg-foreground rounded-md w-32"></div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <div className="text-sm text-gray-500 mb-1">Date</div>
-                      <div className="h-3 bg-gray-200 rounded w-20"></div>
+                      <div className="text-sm text-muted-foreground mb-1">
+                        Date
+                      </div>
+                      <div className="h-3 bg-muted rounded-md w-20"></div>
                     </div>
                     <div>
-                      <div className="text-sm text-gray-500 mb-1">Due</div>
-                      <div className="h-3 bg-gray-200 rounded w-20"></div>
+                      <div className="text-sm text-muted-foreground mb-1">
+                        Due
+                      </div>
+                      <div className="h-3 bg-muted rounded-md w-20"></div>
                     </div>
                   </div>
-                  <div className="border-t pt-4">
+                  <div className="border-t border-border pt-4">
                     <div className="flex justify-between mb-2">
-                      <div className="h-3 bg-gray-100 rounded w-32"></div>
-                      <div className="h-3 bg-gray-100 rounded w-16"></div>
+                      <div className="h-3 bg-muted rounded-md w-32"></div>
+                      <div className="h-3 bg-muted rounded-md w-16"></div>
                     </div>
                     <div className="flex justify-between mb-2">
-                      <div className="h-3 bg-gray-100 rounded w-28"></div>
-                      <div className="h-3 bg-gray-100 rounded w-16"></div>
+                      <div className="h-3 bg-muted rounded-md w-28"></div>
+                      <div className="h-3 bg-muted rounded-md w-16"></div>
                     </div>
                   </div>
-                  <div className="border-t pt-4 flex justify-between items-center">
-                    <div className="font-bold">Total: $1,250</div>
-                    <Button size="sm" className="bg-black text-white">Create</Button>
+                  <div className="border-t border-border pt-4 flex justify-between items-center">
+                    <div className="font-bold text-foreground">
+                      Total: $1,250
+                    </div>
+                    <Button size="sm" className="bg-foreground text-background">
+                      Create
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -106,45 +120,55 @@ export default function HowItWorksPage() {
 
           {/* Step 2 */}
           <div className="grid md:grid-cols-2 gap-16 items-center mb-24">
-            <div className="order-2 md:order-1 bg-gradient-to-br from-gray-50 to-gray-100 rounded-3xl p-8">
-              <div className="bg-white rounded-2xl p-6 shadow-lg">
+            <div className="order-2 md:order-1 rounded-md p-8">
+              <div className="bg-card rounded-md p-6 shadow-lg">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-bold text-black">Send Invoice</h3>
-                  <Send className="w-5 h-5 text-gray-500" />
+                  <h3 className="font-bold text-foreground">Send Invoice</h3>
+                  <Send className="w-5 h-5 text-muted-foreground" />
                 </div>
                 <div className="space-y-4">
                   <div>
-                    <div className="text-sm text-gray-500 mb-1">To</div>
-                    <div className="h-3 bg-black rounded w-40"></div>
+                    <div className="text-sm text-muted-foreground mb-1">To</div>
+                    <div className="h-3 bg-foreground rounded-md w-40"></div>
                   </div>
                   <div>
-                    <div className="text-sm text-gray-500 mb-1">Subject</div>
-                    <div className="h-3 bg-gray-200 rounded w-full"></div>
+                    <div className="text-sm text-muted-foreground mb-1">
+                      Subject
+                    </div>
+                    <div className="h-3 bg-muted rounded-md w-full"></div>
                   </div>
                   <div>
-                    <div className="text-sm text-gray-500 mb-1">Message</div>
+                    <div className="text-sm text-muted-foreground mb-1">
+                      Message
+                    </div>
                     <div className="space-y-2">
-                      <div className="h-3 bg-gray-100 rounded w-full"></div>
-                      <div className="h-3 bg-gray-100 rounded w-3/4"></div>
-                      <div className="h-3 bg-gray-100 rounded w-1/2"></div>
+                      <div className="h-3 bg-muted rounded-md w-full"></div>
+                      <div className="h-3 bg-muted rounded-md w-3/4"></div>
+                      <div className="h-3 bg-muted rounded-md w-1/2"></div>
                     </div>
                   </div>
                   <div className="flex justify-between items-center pt-4">
-                    <div className="text-sm text-gray-500">Invoice attached</div>
-                    <Button size="sm" className="bg-black text-white">Send</Button>
+                    <div className="text-sm text-muted-foreground">
+                      Invoice attached
+                    </div>
+                    <Button size="sm" className="bg-foreground text-background">
+                      Send
+                    </Button>
                   </div>
                 </div>
               </div>
             </div>
             <div className="order-1 md:order-2">
               <div className="flex items-center mb-6">
-                <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center text-white font-bold text-xl mr-4">
+                <div className="w-12 h-12 bg-foreground rounded-md flex items-center justify-center text-background font-bold text-xl mr-4">
                   2
                 </div>
-                <h2 className="text-3xl font-bold text-black">Send to Your Client</h2>
+                <h2 className="text-3xl font-bold text-foreground">
+                  Send to Your Client
+                </h2>
               </div>
-              <p className="text-xl text-gray-600 mb-6 leading-relaxed">
-                Send your invoice directly to your client with just one click. 
+              <p className="text-xl text-muted-foreground mb-6 leading-relaxed">
+                Send your invoice directly to your client with just one click.
                 We'll handle the email delivery and tracking for you.
               </p>
               <ul className="space-y-3">
@@ -152,11 +176,11 @@ export default function HowItWorksPage() {
                   "One-click email sending",
                   "Professional email templates",
                   "Delivery confirmation",
-                  "Automatic follow-up reminders"
+                  "Automatic follow-up reminders",
                 ].map((feature, index) => (
                   <li key={index} className="flex items-center">
-                    <CheckCircle className="w-5 h-5 text-green-500 mr-3" />
-                    <span className="text-gray-700">{feature}</span>
+                    <CheckCircle className="w-5 h-5 text-primary mr-3" />
+                    <span className="text-muted-foreground">{feature}</span>
                   </li>
                 ))}
               </ul>
@@ -167,55 +191,54 @@ export default function HowItWorksPage() {
           <div className="grid md:grid-cols-2 gap-16 items-center mb-24">
             <div>
               <div className="flex items-center mb-6">
-                <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center text-white font-bold text-xl mr-4">
+                <div className="w-12 h-12 bg-foreground rounded-md flex items-center justify-center text-background font-bold text-xl mr-4">
                   3
                 </div>
-                <h2 className="text-3xl font-bold text-black">Get Paid Instantly</h2>
+                <h2 className="text-3xl font-bold text-foreground">
+                  Get Paid Instantly
+                </h2>
               </div>
-              <p className="text-xl text-gray-600 mb-6 leading-relaxed">
-                Your clients can pay directly from the invoice with secure online payments. 
-                Money goes straight to your account.
+              <p className="text-xl text-muted-foreground mb-6 leading-relaxed">
+                Your clients can pay directly from the invoice with secure
+                online payments. Money goes straight to your account.
               </p>
               <ul className="space-y-3">
                 {[
                   "Secure online payments",
                   "Multiple payment methods",
                   "Instant payment notifications",
-                  "Automatic invoice status updates"
+                  "Automatic invoice status updates",
                 ].map((feature, index) => (
                   <li key={index} className="flex items-center">
-                    <CheckCircle className="w-5 h-5 text-green-500 mr-3" />
-                    <span className="text-gray-700">{feature}</span>
+                    <CheckCircle className="w-5 h-5 text-primary mr-3" />
+                    <span className="text-muted-foreground">{feature}</span>
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-3xl p-8">
-              <div className="bg-white rounded-2xl p-6 shadow-lg">
+            <div className="rounded-md p-8">
+              <div className="bg-card rounded-md p-6 shadow-lg">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-bold text-black">Invoice Payment</h3>
-                  <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                    <CheckCircle className="w-4 h-4 text-white" />
+                  <h3 className="font-bold text-foreground">Invoice Payment</h3>
+                  <div className="w-6 h-6 bg-primary rounded-md flex items-center justify-center">
+                    <CheckCircle className="w-4 h-4 text-background" />
                   </div>
                 </div>
                 <div className="space-y-4">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Amount Due</span>
-                    <span className="font-bold text-black">$1,250.00</span>
+                    <span className="text-muted-foreground">Amount Due</span>
+                    <span className="font-bold text-foreground">$1,250.00</span>
                   </div>
-                  <div className="border rounded-lg p-4 bg-gray-50">
+                  <div className="border border-border rounded-md p-4 bg-muted">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm text-gray-600">Pay with</span>
-                      <div className="flex space-x-2">
-                        <div className="w-8 h-5 bg-blue-600 rounded"></div>
-                        <div className="w-8 h-5 bg-red-500 rounded"></div>
-                        <div className="w-8 h-5 bg-yellow-400 rounded"></div>
-                      </div>
+                      <span className="text-sm text-muted-foreground">
+                        Pay with
+                      </span>
                     </div>
-                    <div className="h-3 bg-gray-200 rounded w-full mb-2"></div>
-                    <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                    <div className="h-3 bg-muted-foreground/20 rounded-md w-full mb-2"></div>
+                    <div className="h-3 bg-muted-foreground/20 rounded-md w-1/2"></div>
                   </div>
-                  <Button className="w-full bg-black text-white">
+                  <Button className="w-full bg-foreground text-background">
                     Pay $1,250.00
                   </Button>
                 </div>
@@ -226,13 +249,13 @@ export default function HowItWorksPage() {
       </section>
 
       {/* Key Features */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-20 bg-muted">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-black text-black mb-4">
+            <h2 className="text-4xl md:text-5xl font-black text-foreground mb-4">
               Why Choose Invoicely?
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Built for modern professionals who value simplicity and efficiency
             </p>
           </div>
@@ -242,43 +265,52 @@ export default function HowItWorksPage() {
               {
                 icon: Zap,
                 title: "Lightning Fast",
-                description: "Create and send invoices in under 2 minutes. No complex setup or learning curve required."
+                description:
+                  "Create and send invoices in under 2 minutes. No complex setup or learning curve required.",
               },
               {
                 icon: Shield,
                 title: "Bank-Level Security",
-                description: "Your data and payments are protected with enterprise-grade security and encryption."
+                description:
+                  "Your data and payments are protected with enterprise-grade security and encryption.",
               },
               {
                 icon: Clock,
                 title: "Save Time",
-                description: "Automate recurring invoices, reminders, and follow-ups. Focus on your work, not paperwork."
+                description:
+                  "Automate recurring invoices, reminders, and follow-ups. Focus on your work, not paperwork.",
               },
               {
                 icon: BarChart,
                 title: "Track Everything",
-                description: "Monitor payment status, track revenue trends, and get insights into your business performance."
+                description:
+                  "Monitor payment status, track revenue trends, and get insights into your business performance.",
               },
               {
                 icon: Globe,
                 title: "Global Reach",
-                description: "Send invoices worldwide with multi-currency support and localized payment methods."
+                description:
+                  "Send invoices worldwide with multi-currency support and localized payment methods.",
               },
               {
                 icon: Users,
                 title: "Client-Friendly",
-                description: "Beautiful, professional invoices that make it easy for clients to understand and pay."
-              }
+                description:
+                  "Beautiful, professional invoices that make it easy for clients to understand and pay.",
+              },
             ].map((feature, index) => (
-              <Card key={index} className="border-0 bg-white hover:shadow-lg transition-all duration-300">
+              <Card
+                key={index}
+                className="border-0 bg-card hover:shadow-lg transition-all duration-300"
+              >
                 <CardContent className="p-8 text-center">
-                  <div className="w-16 h-16 bg-black rounded-2xl flex items-center justify-center mx-auto mb-6">
-                    <feature.icon className="w-8 h-8 text-white" />
+                  <div className="w-16 h-16 bg-foreground rounded-md flex items-center justify-center mx-auto mb-6">
+                    <feature.icon className="w-8 h-8 text-background" />
                   </div>
-                  <h3 className="text-xl font-bold text-black mb-3">
+                  <h3 className="text-xl font-bold text-foreground mb-3">
                     {feature.title}
                   </h3>
-                  <p className="text-gray-600 leading-relaxed">
+                  <p className="text-muted-foreground leading-relaxed">
                     {feature.description}
                   </p>
                 </CardContent>
@@ -289,13 +321,13 @@ export default function HowItWorksPage() {
       </section>
 
       {/* Process Timeline */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-background">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-black mb-4">
+            <h2 className="text-4xl font-bold text-foreground mb-4">
               From Setup to Payment in Minutes
             </h2>
-            <p className="text-xl text-gray-600">
+            <p className="text-xl text-muted-foreground">
               See how quickly you can get started with Invoicely
             </p>
           </div>
@@ -305,43 +337,54 @@ export default function HowItWorksPage() {
               {
                 time: "30 seconds",
                 title: "Sign Up",
-                description: "Create your free account with just your email address. No credit card required."
+                description:
+                  "Create your free account with just your email address. No credit card required.",
               },
               {
                 time: "1 minute",
                 title: "Add Client Details",
-                description: "Enter your client's information and your business details. We'll save it for next time."
+                description:
+                  "Enter your client's information and your business details. We'll save it for next time.",
               },
               {
                 time: "2 minutes",
                 title: "Create Invoice",
-                description: "Add line items, set your rates, and customize the invoice with your branding."
+                description:
+                  "Add line items, set your rates, and customize the invoice with your branding.",
               },
               {
                 time: "10 seconds",
                 title: "Send Invoice",
-                description: "One click to send your professional invoice directly to your client's inbox."
+                description:
+                  "One click to send your professional invoice directly to your client's inbox.",
               },
               {
                 time: "Instant",
                 title: "Get Paid",
-                description: "Your client receives the invoice and can pay immediately with secure online payments."
-              }
+                description:
+                  "Your client receives the invoice and can pay immediately with secure online payments.",
+              },
             ].map((step, index) => (
               <div key={index} className="flex items-start space-x-6">
                 <div className="flex-shrink-0">
-                  <div className="w-16 h-16 bg-black rounded-full flex items-center justify-center">
-                    <span className="text-white font-bold">{index + 1}</span>
+                  <div className="w-16 h-16 bg-foreground rounded-md flex items-center justify-center">
+                    <span className="text-background font-bold">
+                      {index + 1}
+                    </span>
                   </div>
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center mb-2">
-                    <h3 className="text-xl font-bold text-black mr-3">{step.title}</h3>
-                    <span className="text-sm bg-gray-100 text-gray-600 px-3 py-1 rounded-full">
+                    <h3 className="text-xl font-bold text-foreground mr-3">
+                      {step.title}
+                    </h3>
+                    <span className="text-sm bg-muted text-muted-foreground px-3 py-1 rounded-md">
                       {step.time}
                     </span>
                   </div>
-                  <p className="text-gray-600 leading-relaxed">{step.description}</p>
+                  <p className="text-muted-foreground leading-relaxed">
+                    {step.description}
+                  </p>
                 </div>
               </div>
             ))}
@@ -352,41 +395,38 @@ export default function HowItWorksPage() {
       {/* CTA Section */}
       <section className="relative py-32 overflow-hidden">
         {/* Grid Background */}
-        <div className="absolute inset-0 bg-black">
+        <div className="absolute inset-0 bg-foreground">
           <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.05)_1px,transparent_1px)] bg-[size:72px_72px]"></div>
-          <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-black opacity-90"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-foreground via-muted-foreground to-foreground opacity-90"></div>
         </div>
-        
+
         {/* Content */}
         <div className="relative max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          {/* Main Heading */}
-          <h2 className="text-4xl md:text-5xl font-black text-white mb-8 leading-tight">
+          <h2 className="text-4xl md:text-5xl font-black text-background mb-8 leading-tight">
             Ready to Start?
           </h2>
-          
-          {/* CTA Button */}
+
           <Link href="/register">
-            <Button 
-              size="lg" 
-              className="group relative bg-white hover:bg-gray-50 text-black px-8 py-4 text-lg font-medium rounded-2xl shadow-2xl hover:shadow-white/25 transition-all duration-500 hover:scale-105"
+            <Button
+              size="lg"
+              className="group relative bg-background hover:bg-muted text-foreground px-8 py-4 text-lg font-medium rounded-md shadow-lg hover:shadow-xl transition-all duration-500 hover:scale-105"
             >
               <span className="relative z-10 flex items-center">
                 Start Free Today
                 <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
               </span>
-              
-              {/* Glossy button effect */}
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-white/20 via-transparent to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+              <div className="absolute inset-0 rounded-md bg-gradient-to-r from-background/20 via-transparent to-background/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </Button>
           </Link>
         </div>
-        
+
         {/* Floating particles effect */}
-        <div className="absolute top-20 left-20 w-2 h-2 bg-white/20 rounded-full animate-pulse"></div>
-        <div className="absolute top-40 right-32 w-1 h-1 bg-white/30 rounded-full animate-ping"></div>
-        <div className="absolute bottom-32 left-40 w-1.5 h-1.5 bg-white/25 rounded-full animate-pulse"></div>
-        <div className="absolute bottom-20 right-20 w-2 h-2 bg-white/15 rounded-full animate-ping"></div>
+        <div className="absolute top-20 left-20 w-2 h-2 bg-background/20 rounded-full animate-pulse"></div>
+        <div className="absolute top-40 right-32 w-1 h-1 bg-background/30 rounded-full animate-ping"></div>
+        <div className="absolute bottom-32 left-40 w-1.5 h-1.5 bg-background/25 rounded-full animate-pulse"></div>
+        <div className="absolute bottom-20 right-20 w-2 h-2 bg-background/15 rounded-full animate-ping"></div>
       </section>
     </MarketingLayout>
-  )
-} 
+  );
+}
